@@ -26,9 +26,6 @@ const MAGIC_LINK_TEMPLATE_MAP = {
  * Throws an HTTP 400 error if the URL provided for the magic link does not
  * have a domain name on the allow list. Note that this function ignores
  * subdomains unless a subdomain is explicitly added to the allow list.
- * Otherwise, 'distroslate.com' appearing on the allow list will have the
- * effect of allowing the 'library.distroslate.com' as well as the
- * 'read.clickneadmags.com' URLs.
  * @param url The base URL to be used for the magic link
  * @throws HTTPError with code=400 if the url's domain is not allowlisted.
  */

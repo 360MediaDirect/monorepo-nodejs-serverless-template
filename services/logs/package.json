@@ -1,5 +1,5 @@
 {
-  "name": "distro-slate-logs",
+  "name": "logs",
   "version": "0.0.1",
   "main": "handler.js",
   "license": "MIT",

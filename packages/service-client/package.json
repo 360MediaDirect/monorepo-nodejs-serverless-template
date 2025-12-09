@@ -4,7 +4,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "UNLICENSED",
-  "repository": "https://github.com/360MediaDirect/distro-slate",
   "engines": {
     "node": ">=22.x"
   },

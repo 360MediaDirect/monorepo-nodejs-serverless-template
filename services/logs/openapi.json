@@ -9,7 +9,7 @@
   },
   "servers": [
     {
-      "url": "https://api.distroslate.com",
+      "url": "https://api.example.com",
       "description": "Production"
     }
   ],

@@ -16,7 +16,7 @@ describe('/login', () => {
     process.env.PRIVKEY_TEST =
       '-----BEGIN EC PRIVATE KEY-----|MHQCAQEEIOlhAv8I1Z5luoMbI6nhsyfBRA/i5YWtE0WrrXUYuab9oAcGBSuBBAAK|oUQDQgAEL8h4gT11geJS9H23KQAiWc0FRccEJJ8lt0oJ2e30A7FA5IV6508SnxBC|27L9JV5mSe84aLnY6lVUZsSNyDtnWg==|-----END EC PRIVATE KEY-----'
     process.env.SIGNING_KEY_ID = 'TEST'
-    process.env.MAGIC_LINK_URL = 'https://library.distroslate.com/login'
+    process.env.MAGIC_LINK_URL = 'https://example.com/login'
   })
   beforeEach(() => {
     jest.resetAllMocks()

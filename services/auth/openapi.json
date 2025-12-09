@@ -9,7 +9,7 @@
   },
   "servers": [
     {
-      "url": "https://api.distroslate.com",
+      "url": "https://api.example.com",
       "description": "Production"
     }
   ],
@@ -79,13 +79,12 @@
                   },
                   "url": {
                     "type": "string",
-                    "description": "The base URL to email tot he user. This will be appended with the string ?token=MAGIC_TOKEN_HERE automatically. Note that this endpoint only accepts urls matching an allow-list of domains, which includes localhost. Defaults to the production distroslate.com library link."
+                    "description": "The base URL to email to the user. This will be appended with the string ?token=MAGIC_TOKEN_HERE automatically. Note that this endpoint only accepts urls matching an allow-list of domains, which includes localhost."
                   }
                 },
                 "example": {
                   "email": "user@email.com",
-                  "product": "library",
-                  "url": "https://library.distroslate.com/login"
+                  "url": "https://example.com/login"
                 }
               }
             }

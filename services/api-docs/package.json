@@ -1,5 +1,5 @@
 {
-  "name": "distro-slate-api-docs",
+  "name": "api-docs",
   "version": "1.0.0",
   "description": "Hosted API docs",
   "main": "src/index.html",
