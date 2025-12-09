@@ -1,0 +1,8 @@
+{
+  "auth": {
+    "getUsers": 0,
+    "createUser": 1,
+    "getAnyUser": 2,
+    "getOrganizations": 3
+  }
+}

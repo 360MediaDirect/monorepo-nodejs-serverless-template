@@ -1,0 +1,196 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Restler Test API
+  license:
+    name: UNLICENSED
+servers:
+  - url: https://test.com
+    description: Test
+paths:
+  /foo:
+    post:
+      summary: Creates a foo
+      operationId: createFoo
+      tags:
+        - test
+      responses:
+        '200':
+          description: A foo was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Controller"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - foo
+              properties:
+                foo:
+                  type: string
+                bar:
+                  type: string
+                  format: email
+    get:
+      summary: Gets all the foo
+      operationId: getAllFoo
+      x-restler-cache-control: public
+      tags:
+        - test
+      security:
+        - JWTAuth: ['auth|createUser']
+      responses:
+        '200':
+          description: The foo have landed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Controller"
+  /foo/{id}:
+    get:
+      summary: Gets one specific foo
+      operationId: getFoo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - test
+      responses:
+        '200':
+          description: The foo has landed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+  /bar:
+    post:
+      summary: Creates a bar with no response body
+      operationId: createBar
+      x-restler-request-redact: silent
+      x-restler-response-redact: silent
+      responses:
+        '204':
+          description: Successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bar:
+                  type: string
+    put:
+      summary: Updates a bar with fully redacted body
+      operationId: updateBar
+      x-restler-request-redact: body
+      x-restler-response-redact: body
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bar:
+                  type: string
+      responses:
+        '200':
+          description: Successful
+          content:
+            text/plain:
+              schema:
+                type: string
+  /baz:
+    post:
+      summary: Makes a baz
+      operationId: createBaz
+      responses:
+        '201':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+      x-restler-request-redact:
+        - password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+    put:
+      summary: Updates a baz
+      operationId: updateBaz
+      x-restler-response-redact:
+        - token
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                  token:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /error:
+    post:
+      summary: Kaboom
+      operationId: createError
+      responses:
+        '500':
+          description: Oh no
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+
+tags:
+  - name: test
+    description: It's test stuff
+
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Internal:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Controller:
+      type: object
+      required:
+        - controller
+      properties:
+        controller:
+          type: string

@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "API",
+    "license": {
+      "name": "UNLICENSED"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.distroslate.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/logs/client": {
+      "post": {
+        "summary": "Submits a log message",
+        "description": "Logs a given client-side message into the logging system utilized by the service. If an optional authorization token is submitted with this request, the token claims will be added to the logs as well.",
+        "operationId": "clientLog",
+        "tags": ["logs"],
+        "x-restler-request-redact": "silent",
+        "x-restler-response-redact": "silent",
+        "security": [],
+        "responses": {
+          "204": {
+            "description": "Log message was successfully submitted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["level", "message"],
+                "properties": {
+                  "level": {
+                    "type": "string",
+                    "enum": ["debug", "info", "warn", "error"],
+                    "description": "The severity level at which to submit this log message.\n\n**IMPORTANT NOTE:** Logs with the 'error' severity level will generate a developer notification. The 'error' level should only be used for unexpected errors that require immediate attention, and should never be possible to knowingly trigger through user interaction. User-generated errors should be submitted at the 'info' level since they are informational about the user's activity. User errors with unexpected outcomes should be a 'warn'. The 'error' level is appropriate for fatal crashes or high-priority failures in the client that must be immediately addressed."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "A short, human-readable message describing the event being logged. Note that this message should never contain variable values or any other dynamic data. For that, other key/value pairs should be submitted in the `data` field. This allows aggregation of logs by the message value."
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "A free-form collection of key/value pairs to be logged along with the provided message"
+                  }
+                },
+                "example": {
+                  "level": "info",
+                  "message": "Failed social login",
+                  "data": {
+                    "service": "facebook"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "logs",
+      "description": "External log access"
+    }
+  ]
+}

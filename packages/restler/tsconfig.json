@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["ES7"],
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "sourceMap": true,
+    "target": "es2017",
+    "outDir": "dist",
+    "sourceRoot": "src",
+    "esModuleInterop": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./**/__tests__/*", "./**/.webpack/**/*", "./**/_warmup/**/*"]
+}

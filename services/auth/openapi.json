@@ -1,0 +1,573 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API",
+    "license": {
+      "name": "UNLICENSED"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.distroslate.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/auth/login/magiclink": {
+      "post": {
+        "summary": "Requests a magic link",
+        "description": "Asks for a magic link token to be generated and emailed to the provided email address",
+        "operationId": "requestMagicLink",
+        "tags": ["auth"],
+        "responses": {
+          "200": {
+            "description": "Email with magic link was sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "A magic link has been emailed to user@domain.com!"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The email address in the request is not a registered user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Sorry, we couldn't find an account for user@domain.com."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "product": {
+                    "type": "string",
+                    "enum": ["library", "portal", "polls"],
+                    "description": "Specifies whether this link is for the library or the reporting portal. This controls the email template that is sent out."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The base URL to email tot he user. This will be appended with the string ?token=MAGIC_TOKEN_HERE automatically. Note that this endpoint only accepts urls matching an allow-list of domains, which includes localhost. Defaults to the production distroslate.com library link."
+                  }
+                },
+                "example": {
+                  "email": "user@email.com",
+                  "product": "library",
+                  "url": "https://library.distroslate.com/login"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/token/{tokenType}": {
+      "post": {
+        "summary": "Generates an access token by verifying a different supported token",
+        "operationId": "loginWithToken",
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "name": "tokenType",
+            "in": "path",
+            "description": "The type of token being used for authentication",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["refresh", "magic"]
+            }
+          }
+        ],
+        "x-restler-request-redact": ["token"],
+        "x-restler-response-redact": ["accessToken", "refreshToken"],
+        "responses": {
+          "200": {
+            "description": "The provided token was verified, and an access token has been granted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["accessToken", "refreshToken"],
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "accessToken": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjAxMjI0In0.eyJzdWIiOiJmMjU2Y2IwMS02NTRiLTRjYzItYWFhMC1lNTI3YTMwYTAwYTUiLCJlbWFpbCI6InRlc3RAYWRpZXUuY29tIiwicHJtIjoiIiwiaWF0IjoxNjA5NzQxMTYzLCJleHAiOjE2MDk3NDQ3NjMsImF1ZCI6ImFwaS1wcjY4LmFkaWV1LmNvbSIsImlzcyI6ImFwaS1wcjY4LmFkaWV1LmNvbS9hdXRoIn0.H_Mo8NgASceQ8fZCsu5Y40yPAbv82owGiiXIHMDtgp4FcjukuzeF4fAftoq1VPmdrNI3YtsZSj8G98mKA66dww",
+                    "refreshToken": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjAxMjI0In0.eyJzdWIiOiJmMjU2Y2IwMS02NTRiLTRjYzItYWFhMC1lNTI3YTMwYTAwYTUiLCJlbWFpbCI6InRlc3RAYWRpZXUuY29tIiwicHJtIjoiIiwiaWF0IjoxNjA5NzQxMTYzLCJleHAiOjE2NDEyNzcxNjMsImF1ZCI6ImFwaS1wcjY4LmFkaWV1LmNvbS9hdXRoIiwiaXNzIjoiYXBpLXByNjguYWRpZXUuY29tL2F1dGgifQ.lyMIqVwJX-RX9WRoUxeAaL6kVGI4xkec3TCaRs2hffK51ov0WY0D4AtzbzTY2Sgcd1s4nHlFthHxKmZIL_Fekg"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication has failed due to provided data or disabled user account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "clientId"],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The service-provided token to be validated and exchanged for a new short-term access token."
+                  },
+                  "clientId": {
+                    "type": "string",
+                    "description": "A unique identifier for the client being used for login. Web-based clients should generate and store a unique ID that can be re-sent on future calls."
+                  },
+                  "clientDescription": {
+                    "type": "string",
+                    "description": "A human-readable free-form string identifying this client, if available",
+                    "example": "iPhone 12 Pro Max"
+                  },
+                  "requiredScopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "product": {
+                    "type": "string",
+                    "enum": ["library", "portal", "polls"],
+                    "description": "Specifies whether this link is for the library or the reporting portal."
+                  }
+                },
+                "example": {
+                  "product": "library",
+                  "token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjAxMjI0In0.eyJzdWIiOiJmMjU2Y2IwMS02NTRiLTRjYzItYWFhMC1lNTI3YTMwYTAwYTUiLCJlbWFpbCI6InRlc3RAYWRpZXUuY29tIiwicHJtIjoiIiwiaWF0IjoxNjA5NzQxMTYzLCJleHAiOjE2NDEyNzcxNjMsImF1ZCI6ImFwaS1wcjY4LmFkaWV1LmNvbS9hdXRoIiwiaXNzIjoiYXBpLXByNjguYWRpZXUuY29tL2F1dGgifQ.lyMIqVwJX-RX9WRoUxeAaL6kVGI4xkec3TCaRs2hffK51ov0WY0D4AtzbzTY2Sgcd1s4nHlFthHxKmZIL_Fekg"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{id}": {
+      "get": {
+        "operationId": "getOrgById",
+        "tags": ["users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the org to look up",
+            "schema": {
+              "type": "string"
+            },
+            "example": "88e11697-b428-4d88-9e8d-c0b29235160a"
+          }
+        ],
+        "security": [{ "JWTAuth": ["auth|getOrganizations"] }],
+        "responses": {
+          "200": {
+            "description": "Organization list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "getUserById",
+        "tags": ["users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to look up",
+            "schema": {
+              "type": "string"
+            },
+            "example": "88e11697-b428-4d88-9e8d-c0b29235160a"
+          }
+        ],
+        "security": [{ "JWTAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Get an array of users matching the provided conditions in the path var",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations": {
+      "get": {
+        "operationId": "getOrganizations",
+        "tags": ["users"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Gets a listing of organizations, optionally by type",
+            "schema": {
+              "type": "string"
+            },
+            "example": "88e11697-b428-4d88-9e8d-c0b29235160a"
+          }
+        ],
+        "security": [{ "JWTAuth": ["auth|getOrganizations"] }],
+        "responses": {
+          "200": {
+            "description": "Organization list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "getUsers",
+        "tags": ["users"],
+        "parameters": [
+          {
+            "name": "lastEvaluatedKey",
+            "in": "query",
+            "required": false,
+            "description": "The ID of the last User shown in the response to the previous request to this service",
+            "schema": {
+              "type": "string"
+            },
+            "example": "88e11697-b428-4d88-9e8d-c0b29235160a"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "description": "The email of a User",
+            "schema": {
+              "type": "string"
+            },
+            "example": "something@360mediadirect.com"
+          }
+        ],
+        "security": [{ "JWTAuth": ["auth|getUsers"] }],
+        "responses": {
+          "200": {
+            "description": "Get an array of users matching the provided conditions in the query string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates or updates a user account",
+        "operationId": "createUser",
+        "tags": ["users"],
+        "security": [{ "JWTAuth": ["auth|createUser"] }],
+        "responses": {
+          "200": {
+            "description": "The user was created or updated to the return values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Generates an access token required for most other endpoints"
+    },
+    {
+      "name": "users",
+      "description": "User account management"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "JWTAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserProperties": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "idTokenMinIat": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "number",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "number",
+            "readOnly": true
+          },
+          "bannedAt": {
+            "type": "number"
+          },
+          "lastLoginAt": {
+            "type": "number",
+            "readOnly": true
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "subSource": {
+            "type": "string"
+          },
+          "doNotSendEmail": {
+            "type": "boolean"
+          },
+          "clients": {
+            "type": "array",
+            "readOnly": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "description": "A device-specific identifier"
+                },
+                "lastUsedAt": {
+                  "type": "number",
+                  "description": "An epoch timestamp of the last time this device was successfully used to request an access token"
+                },
+                "disabledAt": {
+                  "type": "number",
+                  "description": "An epoch timestamp of the date this device was last disabled. This property is deleted in the event a device is re-enabled."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A human-readable free-form string identifying this device",
+                  "example": "iPhone 12 Pro Max"
+                }
+              }
+            }
+          },
+          "lastEmailStatus": {
+            "type": "string"
+          },
+          "lastEmailStatusChangedAt": {
+            "type": "number"
+          },
+          "softBounceCount": { "type": "number" },
+          "softBounceIncrement": { "type": "boolean" },
+          "hasAtLeastOneDelivery": { "type": "boolean" }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "number",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "number",
+            "readOnly": true
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/UserProperties" },
+          {
+            "required": [
+              "id",
+              "email",
+              "idTokenMinIat",
+              "createdAt",
+              "updatedAt"
+            ]
+          },
+          {
+            "example": {
+              "id": "80821650-6c82-42de-a1a8-ab6228674dd5",
+              "email": "duchess@isis.com",
+              "firstName": "Sterling",
+              "lastName": "Archer",
+              "dob": "1984-03-09",
+              "idTokenMinIat": 0,
+              "lastLoginAt": 1629374952797,
+              "createdAt": 1629374952798,
+              "updatedAt": 1629374952797
+            }
+          }
+        ]
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UserProperties"
+          },
+          { "required": ["email"] },
+          {
+            "example": {
+              "email": "duchess@isis.com"
+            }
+          }
+        ]
+      },
+      "APIError": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthenticationError": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/APIError" },
+          {
+            "type": "object",
+            "required": ["errorCode"],
+            "properties": {
+              "errorCode": {
+                "type": "string",
+                "enum": [
+                  "INVALID_CREDENTIALS",
+                  "INVALID_TOKEN",
+                  "ACCOUNT_DISABLED",
+                  "CLIENT_RECENTLY_DISABLED",
+                  "TOO_MANY_CLIENTS",
+                  "TOKEN_NOT_LINKED"
+                ],
+                "description": "An easily-parsed reason for the authentication failure.\n\n**INVALID_CREDENTIALS:** User-supplied email and/or password is incorrect.\n**INVALID_TOKEN:** The provided token is fake, expired, rejected due to age, or any other reason specific to a provided token.\n**ACCOUNT_DISABLED:** Authenticating with this account has been purposefully blocked.\n**CLIENT_RECENTLY_DISABLED:** Authentication was attempted with a client that was disabled very recently, and can't be re-enabled at this time.\n**TOO_MANY_CLIENTS:** The maximum number of clients were registered, and the earliest was registered too recently to be deactivated.\n**TOKEN_NOT_LINKED:** A token was provided for authentication, but the information it contains could not be linked to an existing account."
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

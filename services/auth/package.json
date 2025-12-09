@@ -1,0 +1,77 @@
+{
+  "name": "distro-slate-auth",
+  "version": "0.0.1",
+  "main": "handler.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build": "tsc && cp -r src/!(*.ts) dist/ 2>/dev/null || true",
+    "build:watch": "tsc -w",
+    "lint": "eslint './src/**/*.{js,ts}'",
+    "lint:fix": "eslint './src/**/*.{js,ts}' --fix",
+    "lint-staged": "lint-staged",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.34.0",
+    "@types/aws-sdk": "^2.7.4",
+    "@types/http-errors": "^2",
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.3.0",
+    "jest": "^30.1.1",
+    "jiti": "^2.5.1",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0"
+  },
+  "dependencies": {
+    "@360mediadirect/auth-helper": "^1.0.0",
+    "@360mediadirect/digital-signature": "^1.1.10",
+    "@360mediadirect/dynamodb-locks": "^1.1.0",
+    "@360mediadirect/log": "^1.1.1",
+    "@360mediadirect/modeler": "^1.0.0",
+    "@360mediadirect/restler": "^1.0.0",
+    "@360mediadirect/service-client": "^1.0.0",
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "@aws/dynamodb-data-marshaller": "^0.7.3",
+    "@aws/dynamodb-expressions": "^0.7.3",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1692.0",
+    "http-errors": "^2.0.0",
+    "lodash": "^4.17.21"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testMatch": [
+      "**/__tests__/**/*.spec.{js,ts}?(x)"
+    ],
+    "testEnvironment": "node",
+    "verbose": true,
+    "testPathIgnorePatterns": [],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/index*",
+      "!src/ddb*",
+      "!src/scripts/*"
+    ],
+    "moduleNameMapper": {
+      "^@360mediadirect/(api-client|emailer|modeler|restler|service-client)$": "<rootDir>/../../packages/$1/src"
+    }
+  }
+}

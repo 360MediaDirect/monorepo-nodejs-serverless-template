@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    {
+      "inputFile": "../auth/openapi.json"
+    },
+    {
+      "inputFile": "../logs/openapi.json"
+    }
+  ],
+  "output": "./dist/openapi-full.json"
+}

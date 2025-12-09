@@ -1,0 +1,39 @@
+{
+  "name": "monorepo-nodejs-serverless-template",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "ui/*",
+    "infra"
+  ],
+  "scripts": {
+    "lint": "lerna run lint",
+    "lint:fix": "lerna run lint:fix",
+    "build": "lerna run build",
+    "build:services": "lerna run build --scope=\"monorepo-nodejs-serverless-template-*\"",
+    "deploy:dev": "npm run build:services && cd infra && npm run deploy -- --context stage=dev",
+    "deploy:staging": "npm run build:services && cd infra && npm run deploy -- --context stage=staging",
+    "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod",
+    "synth": "cd infra && npm run synth",
+    "diff": "cd infra && npm run diff"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "eslint": "^9.34.0",
+    "husky": "^9.1.7",
+    "lerna": "8.2.3",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  },
+  "lint-staged": {
+    "*.{md,json}": [
+      "prettier -l --write"
+    ]
+  },
+  "packageManager": "yarn@4.9.4"
+}

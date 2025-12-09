@@ -1,0 +1,43 @@
+{
+  "name": "distro-slate-logs",
+  "version": "0.0.1",
+  "main": "handler.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && cp -r src/!(*.ts) dist/ 2>/dev/null || true",
+    "build:watch": "tsc -w",
+    "lint": "eslint './src/**/*.{js,ts}'",
+    "lint:fix": "eslint './src/**/*.{js,ts}' --fix",
+    "lint-staged": "lint-staged",
+    "test": "npm run lint && LOG_SILENT=1 jest --coverage --runInBand",
+    "test:watch": "LOG_SILENT=1 jest --watch --colors --runInBand",
+    "clean": "rm -rf coverage node_modules .webpack dist"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testMatch": [
+      "**/__tests__/**/*.spec.{js,ts}?(x)"
+    ],
+    "testEnvironment": "node",
+    "verbose": true,
+    "testPathIgnorePatterns": [],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!@360mediadirect|uuid)/"
+    ],
+    "moduleNameMapper": {
+      "^@360mediadirect/(api-client|emailer|modeler|restler|service-client)$": "<rootDir>/../../packages/$1/src",
+      "^uuid$": "<rootDir>/../../node_modules/uuid/dist/cjs"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}
