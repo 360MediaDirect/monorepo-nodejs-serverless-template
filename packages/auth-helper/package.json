@@ -1,8 +1,9 @@
 {
   "name": "@360mediadirect/auth-helper",
   "version": "1.0.0",
-  "description": "DynamoDB model access library",
+  "description": "Auth helper",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Tom Shawver <tom@360mediadirect.com>",
   "license": "ISC",
   "engines": {

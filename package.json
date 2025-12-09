@@ -16,9 +16,7 @@
     "build:services": "lerna run build --scope=\"monorepo-nodejs-serverless-template-*\"",
     "deploy:dev": "npm run build:services && cd infra && npm run deploy -- --context stage=dev",
     "deploy:staging": "npm run build:services && cd infra && npm run deploy -- --context stage=staging",
-    "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod",
-    "synth": "cd infra && npm run synth",
-    "diff": "cd infra && npm run diff"
+    "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod"
   },
   "devDependencies": {
     "@types/node": "^24.10.2",

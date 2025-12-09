@@ -1,8 +1,9 @@
 {
   "name": "@360mediadirect/restler",
   "version": "1.0.0",
-  "description": "AWS Lambda handler for Express-based REST controllers",
+  "description": "RESTify controllers in services",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Tom Shawver <tom@360mediadirect.com>",
   "license": "UNLICENSED",
   "engines": {
