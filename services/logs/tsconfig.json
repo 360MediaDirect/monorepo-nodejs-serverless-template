@@ -12,8 +12,10 @@
     "target": "es2020",
     "outDir": "lib",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["jest"],
+    "skipLibCheck": true
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/__tests__/**/*"]
+  "exclude": ["node_modules", "dist"]
 }

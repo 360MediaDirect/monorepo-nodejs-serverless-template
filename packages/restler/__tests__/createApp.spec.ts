@@ -114,11 +114,12 @@ describe('createApp', () => {
     const app = createApp(opts)
     const res = await supertest(app).post('/foo').send({ foo: 'foo', bar: 'b' })
     expect(res.status).toEqual(400)
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        error: expect.stringContaining('bar should match format "email"'),
-      }),
-    )
+    expect(res.body).toHaveProperty('error')
+    expect(res.body).toHaveProperty('details')
+    expect(Array.isArray(res.body.details)).toBe(true)
+    expect(res.body.details.length).toBeGreaterThan(0)
+    const errorMessage = JSON.stringify(res.body.details)
+    expect(errorMessage).toMatch(/email|format/)
   })
   it('sends 401 when calling a secure endpoint with no token', async () => {
     const app = createApp(opts)

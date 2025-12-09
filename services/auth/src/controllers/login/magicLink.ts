@@ -64,17 +64,7 @@ export const requestMagicLink = createController(async (req, res) => {
     email: cleanEmail,
     userId: user.id,
   })
-  // await postmark.sendEmailWithTemplate({
-  //   TemplateAlias:
-  //     MAGIC_LINK_TEMPLATE_MAP[product] || MAGIC_LINK_TEMPLATES.DEFAULT,
-  //   From: process.env.FROM_EMAIL,
-  //   To: cleanEmail,
-  //   TemplateModel: {
-  //     // Email heading is, "Your magic link is here, {firstName}!"
-  //     firstName: user.firstName || 'awaiting your click',
-  //     actionUrl: `${url}?token=${signed}`,
-  //   },
-  // })
+  // TODO: send via email
   res.status(200)
   res.json({
     message: `A magic link has been emailed to ${cleanEmail}`,

@@ -47,6 +47,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-prettier: "npm:^5.5.4"
     jest: "npm:^30.2.0"
+    jest-util: "npm:^30.2.0"
     lint-staged: "npm:^16.2.7"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.7.4"
@@ -82,6 +83,7 @@ __metadata:
     express-openapi-validator: "npm:^5.6.0"
     http-errors: "npm:^2.0.1"
     jest: "npm:^30.2.0"
+    jest-util: "npm:^30.2.0"
     prettier: "npm:^3.7.4"
     qs: "npm:^6.14.0"
     shortid: "npm:^2.2.17"
@@ -106,6 +108,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-prettier: "npm:^5.5.4"
     jest: "npm:^30.2.0"
+    jest-util: "npm:^30.2.0"
     lint-staged: "npm:^16.2.7"
     prettier: "npm:^3.7.4"
     ts-jest: "npm:^29.4.6"
@@ -3514,6 +3517,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.4"
     http-errors: "npm:^2.0.1"
     jest: "npm:^30.2.0"
+    jest-util: "npm:^30.2.0"
     lint-staged: "npm:^16.2.7"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.7.4"
@@ -7069,7 +7073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-util@npm:30.2.0":
+"jest-util@npm:30.2.0, jest-util@npm:^30.2.0":
   version: 30.2.0
   resolution: "jest-util@npm:30.2.0"
   dependencies:
@@ -7760,6 +7764,7 @@ __metadata:
     "@eslint/js": "npm:^9.39.1"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.10.2"
+    "@types/supertest": "npm:^6.0.3"
     "@typescript-eslint/eslint-plugin": "npm:^8.49.0"
     "@typescript-eslint/parser": "npm:^8.49.0"
     aws-sdk: "npm:^2.1692.0"
@@ -7767,6 +7772,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-prettier: "npm:^5.5.4"
     jest: "npm:^30.2.0"
+    jest-util: "npm:^30.2.0"
     lint-staged: "npm:^16.2.7"
     prettier: "npm:^3.7.4"
     supertest: "npm:^7.1.4"

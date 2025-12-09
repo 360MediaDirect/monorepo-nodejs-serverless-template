@@ -1,0 +1,6 @@
+export const v4 = jest.fn(() => 'test-uuid-123')
+export const v5 = jest.fn()
+export const v1 = jest.fn()
+export const v3 = jest.fn()
+export const v6 = jest.fn()
+export const v7 = jest.fn()

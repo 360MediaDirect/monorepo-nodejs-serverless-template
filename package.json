@@ -14,6 +14,7 @@
     "lint:fix": "lerna run lint:fix",
     "build": "lerna run build",
     "build:services": "lerna run build --scope=\"monorepo-nodejs-serverless-template-*\"",
+    "test": "lerna run test",
     "deploy:dev": "npm run build:services && cd infra && npm run deploy -- --context stage=dev",
     "deploy:staging": "npm run build:services && cd infra && npm run deploy -- --context stage=staging",
     "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod",

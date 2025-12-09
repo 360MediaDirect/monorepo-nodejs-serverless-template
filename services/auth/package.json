@@ -5,12 +5,13 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "tsc && cp -r src/!(*.ts) dist/ 2>/dev/null || true",
-    "build:watch": "tsc -w",
+    "build": "tsc -p tsconfig.build.json && cp -r src/!(*.ts) dist/ 2>/dev/null || true",
+    "build:watch": "tsc -w -p tsconfig.build.json",
     "lint": "eslint './src/**/*.{js,ts}'",
     "lint:fix": "eslint './src/**/*.{js,ts}' --fix",
     "lint-staged": "lint-staged",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "test": "yarn lint && jest --coverage",
+    "test:watch": "yarn lint && jest --watchAll",
     "clean": "rm -rf coverage"
   },
   "lint-staged": {
@@ -31,6 +32,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
+    "jest-util": "^30.2.0",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "supertest": "^7.1.4",
@@ -50,5 +52,24 @@
     "aws-sdk": "^2.1692.0",
     "http-errors": "^2.0.1",
     "lodash": "^4.17.21"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testMatch": [
+      "**/__tests__/**/*.spec.{js,ts}?(x)"
+    ],
+    "testEnvironment": "node",
+    "verbose": true,
+    "testPathIgnorePatterns": [],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "moduleNameMapper": {
+      "^@360mediadirect/restler$": "<rootDir>/../../packages/restler/src/index.ts",
+      "^@360mediadirect/auth-helper$": "<rootDir>/../../packages/auth-helper/src/index.ts"
+    },
+    "setupFiles": [
+      "<rootDir>/jest.setup.ts"
+    ]
   }
 }
