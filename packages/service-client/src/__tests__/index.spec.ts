@@ -2,7 +2,7 @@ import {
   ServiceClient,
   ServiceClientOptions,
   InvokeServiceOptions,
-  ServiceResponse
+  ServiceResponse,
 } from '../index'
 
 describe('service-client exports', () => {
@@ -15,16 +15,16 @@ describe('service-client exports', () => {
     // Test that interface is properly typed by creating valid objects
     const validOptions1: ServiceClientOptions = {}
     const validOptions2: ServiceClientOptions = {
-      region: 'us-west-2'
+      region: 'us-west-2',
     }
     const validOptions3: ServiceClientOptions = {
       region: 'us-west-2',
-      endpoint: 'http://localhost:3001'
+      endpoint: 'http://localhost:3001',
     }
     const validOptions4: ServiceClientOptions = {
       region: 'us-west-2',
       accessKeyId: 'test-key',
-      secretAccessKey: 'test-secret'
+      secretAccessKey: 'test-secret',
     }
 
     expect(validOptions1).toBeDefined()
@@ -37,17 +37,17 @@ describe('service-client exports', () => {
     // Test that interface is properly typed
     const validOptions1: InvokeServiceOptions = {}
     const validOptions2: InvokeServiceOptions = {
-      invocationType: 'RequestResponse'
+      invocationType: 'RequestResponse',
     }
     const validOptions3: InvokeServiceOptions = {
       invocationType: 'Event',
-      logType: 'Tail'
+      logType: 'Tail',
     }
     const validOptions4: InvokeServiceOptions = {
       invocationType: 'DryRun',
       logType: 'None',
       clientContext: 'test-context',
-      qualifier: '$LATEST'
+      qualifier: '$LATEST',
     }
 
     expect(validOptions1).toBeDefined()
@@ -61,14 +61,14 @@ describe('service-client exports', () => {
     const validResponse1: ServiceResponse = {}
     const validResponse2: ServiceResponse<string> = {
       StatusCode: 200,
-      Payload: 'test response'
+      Payload: 'test response',
     }
     const validResponse3: ServiceResponse<{ data: number }> = {
       StatusCode: 200,
       FunctionError: undefined,
       LogResult: 'logs',
       Payload: { data: 123 },
-      ExecutedVersion: '$LATEST'
+      ExecutedVersion: '$LATEST',
     }
 
     expect(validResponse1).toBeDefined()
@@ -111,8 +111,8 @@ describe('service-client exports', () => {
       () =>
         new ServiceClient({
           region: 'us-west-1',
-          endpoint: 'http://localhost:3001'
-        })
+          endpoint: 'http://localhost:3001',
+        }),
     ).not.toThrow()
   })
 })

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extra-semi */
 /**
  * Produces a redacted copy of the given object, redacting only the requested
  * fields if they exist.
@@ -10,7 +9,7 @@
  */
 export function redact<T extends Record<string, any>>(
   obj: T | null | undefined,
-  fields: string[]
+  fields: string[],
 ): T | null | undefined {
   if (!obj) return obj
   const redacted = { ...obj }

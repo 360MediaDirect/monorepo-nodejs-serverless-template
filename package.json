@@ -16,11 +16,12 @@
     "build:services": "lerna run build --scope=\"monorepo-nodejs-serverless-template-*\"",
     "deploy:dev": "npm run build:services && cd infra && npm run deploy -- --context stage=dev",
     "deploy:staging": "npm run build:services && cd infra && npm run deploy -- --context stage=staging",
-    "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod"
+    "deploy:prod": "npm run build:services && cd infra && npm run deploy -- --context stage=prod",
+    "clean": "lerna run clean && rm -rf .yarn"
   },
   "devDependencies": {
     "@types/node": "^24.10.2",
-    "eslint": "^9.34.0",
+    "eslint": "^9.39.1",
     "husky": "^9.1.7",
     "lerna": "8.2.3",
     "lint-staged": "^16.1.5",

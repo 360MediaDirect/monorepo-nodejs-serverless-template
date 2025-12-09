@@ -14,7 +14,7 @@ interface OAVRoute {
 
 const openApiRoutes = (
   apiSpec: string | any,
-  controllers: ControllerMap
+  controllers: ControllerMap,
 ): Middleware | Middleware[] => {
   return openApiMiddleware({
     apiSpec,
@@ -23,7 +23,7 @@ const openApiRoutes = (
       resolver: (
         basePath: string,
         route: OAVRoute,
-        apiDoc: any
+        apiDoc: any,
       ): Middleware => {
         // See issue: https://github.com/cdimascio/express-openapi-validator/issues/512
         const pathKey = route.openApiRoute.substring(route.basePath.length)
@@ -33,12 +33,12 @@ const openApiRoutes = (
           log.error('Controller not found for openapi-defined endpoint (404)', {
             basePath,
             pathKey,
-            controllerId
+            controllerId,
           })
           throw createError(404)
         }
         return controllers[controllerId]
-      }
+      },
     },
     validateSecurity: {
       handlers: {
@@ -58,9 +58,9 @@ const openApiRoutes = (
         Internal: (req: RestRequest) => {
           if (!req.isInternal) throw createError(401)
           return true
-        }
-      }
-    }
+        },
+      },
+    },
   })
 }
 

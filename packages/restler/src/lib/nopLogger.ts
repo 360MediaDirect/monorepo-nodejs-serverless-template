@@ -6,7 +6,7 @@ const nopLogger: Logger = {
   },
   error: () => {},
   warn: () => {},
-  info: () => {}
+  info: () => {},
 }
 
 export default nopLogger

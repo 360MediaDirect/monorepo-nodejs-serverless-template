@@ -35,7 +35,7 @@ describe('BaseModel', () => {
         name: 'Test Name',
         email: 'test@example.com',
         createdAt: 1234567890,
-        updatedAt: 1234567890
+        updatedAt: 1234567890,
       }
 
       const model = TestModel.from<TestModel>(data)
@@ -59,7 +59,7 @@ describe('BaseModel', () => {
     it('should create a deep copy of the input data', () => {
       const nestedData = {
         id: 'test-id',
-        metadata: { nested: 'value' }
+        metadata: { nested: 'value' },
       }
 
       const model = TestModel.from<TestModel>(nestedData as any)
@@ -76,7 +76,7 @@ describe('BaseModel', () => {
       const mockResult = {
         id: 'test-id',
         name: 'Test Name',
-        createdAt: 1234567890
+        createdAt: 1234567890,
       }
 
       mockedMapper.get.mockResolvedValue(mockResult as any)
@@ -85,7 +85,7 @@ describe('BaseModel', () => {
       const result = await TestModel.get<TestModel>({ id: 'test-id' })
 
       expect(mockedMapper.get).toHaveBeenCalledWith(expect.any(TestModel), {
-        readConsistency: 'eventual'
+        readConsistency: 'eventual',
       })
       expect(result).toBeInstanceOf(TestModel)
       expect(result.id).toBe('test-id')
@@ -100,7 +100,7 @@ describe('BaseModel', () => {
       await TestModel.get<TestModel>({ id: 'test-id' }, undefined, true)
 
       expect(mockedMapper.get).toHaveBeenCalledWith(expect.any(TestModel), {
-        readConsistency: 'strong'
+        readConsistency: 'strong',
       })
     })
 
@@ -109,7 +109,7 @@ describe('BaseModel', () => {
       const mockAsyncIterable = {
         async *[Symbol.asyncIterator]() {
           yield mockResult
-        }
+        },
       }
 
       mockedMapper.query.mockReturnValue(mockAsyncIterable as any)
@@ -117,7 +117,7 @@ describe('BaseModel', () => {
 
       const result = await TestModel.get<TestModel>(
         { email: 'test@example.com' },
-        'email-index'
+        'email-index',
       )
 
       expect(mockedMapper.query).toHaveBeenCalledWith(
@@ -125,8 +125,8 @@ describe('BaseModel', () => {
         { email: 'test@example.com' },
         {
           indexName: 'email-index',
-          readConsistency: 'eventual'
-        }
+          readConsistency: 'eventual',
+        },
       )
       expect(result.email).toBe('test@example.com')
     })
@@ -136,7 +136,7 @@ describe('BaseModel', () => {
       const mockAsyncIterable = {
         async *[Symbol.asyncIterator]() {
           yield mockResult
-        }
+        },
       }
 
       mockedMapper.query.mockReturnValue(mockAsyncIterable as any)
@@ -149,8 +149,8 @@ describe('BaseModel', () => {
         { id: 'test-id' },
         {
           indexName: 'test-index',
-          readConsistency: 'strong'
-        }
+          readConsistency: 'strong',
+        },
       )
     })
   })
@@ -164,7 +164,7 @@ describe('BaseModel', () => {
       const mockSavedModel = {
         ...model,
         deletedAt: 1234567890,
-        deletedReason: 'test reason'
+        deletedReason: 'test reason',
       }
       mockedMapper.put.mockResolvedValue(mockSavedModel as any)
 
@@ -224,7 +224,7 @@ describe('BaseModel', () => {
       const mockSavedModel = {
         ...model,
         updatedAt: 1234567890,
-        createdAt: 1234567890
+        createdAt: 1234567890,
       }
       mockedMapper.put.mockResolvedValue(mockSavedModel as any)
 

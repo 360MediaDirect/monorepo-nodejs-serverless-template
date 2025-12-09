@@ -8,7 +8,7 @@ const addBasicAuth = (basicAuth?: string): Middleware => {
     const match = auth.match(/^\s*Basic (\S+)\s*$/)
     if (match) {
       log.info('Authorization header is Basic', {
-        reqId: req.id
+        reqId: req.id,
       })
     } else {
       return next()

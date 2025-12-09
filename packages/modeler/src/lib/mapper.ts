@@ -8,8 +8,8 @@ const { DYNAMODB_REGION, DYNAMODB_ENDPOINT } = process.env
 const mapper = new DataMapper({
   client: new DynamoDB({
     region: DYNAMODB_REGION || process.env.AWS_REGION || 'us-east-1',
-    ...(DYNAMODB_ENDPOINT && { endpoint: DYNAMODB_ENDPOINT })
-  })
+    ...(DYNAMODB_ENDPOINT && { endpoint: DYNAMODB_ENDPOINT }),
+  }),
 })
 
 export { mapper }

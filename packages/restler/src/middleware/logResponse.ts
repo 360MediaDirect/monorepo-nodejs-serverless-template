@@ -9,7 +9,7 @@ const logResponse = (): Middleware => {
         body: res.responseBody || '',
         startTime: req.startTime.toISOString(),
         endTime: endTime.toISOString(),
-        durationMs: endTime.getTime() - req.startTime.getTime()
+        durationMs: endTime.getTime() - req.startTime.getTime(),
       })
     }
     next()

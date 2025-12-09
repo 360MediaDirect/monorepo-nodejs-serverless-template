@@ -14,7 +14,7 @@ describe('addBasicAuth middleware', () => {
   beforeEach(() => {
     req = {
       id: 'test-req-id',
-      get: jest.fn()
+      get: jest.fn(),
     }
     res = {}
     next = jest.fn()
@@ -51,10 +51,9 @@ describe('addBasicAuth middleware', () => {
     const middleware = addBasicAuth(expectedToken)
     await middleware(req as RestRequest, res as RestResponse, next)
 
-    expect(mockLog.info).toHaveBeenCalledWith(
-      'Authorization header is Basic',
-      { reqId: req.id }
-    )
+    expect(mockLog.info).toHaveBeenCalledWith('Authorization header is Basic', {
+      reqId: req.id,
+    })
     expect(req.isBasicAuthorized).toBe(true)
     expect(next).toHaveBeenCalledTimes(1)
   })
@@ -68,10 +67,9 @@ describe('addBasicAuth middleware', () => {
     const middleware = addBasicAuth(expectedToken)
     await middleware(req as RestRequest, res as RestResponse, next)
 
-    expect(mockLog.info).toHaveBeenCalledWith(
-      'Authorization header is Basic',
-      { reqId: req.id }
-    )
+    expect(mockLog.info).toHaveBeenCalledWith('Authorization header is Basic', {
+      reqId: req.id,
+    })
     expect(req.isBasicAuthorized).toBe(false)
     expect(next).toHaveBeenCalledTimes(1)
   })

@@ -3,9 +3,8 @@ import {
   doBatchOp,
   runOpsOnItemSet,
   autoPaginateScan,
-  runQuery
+  runQuery,
 } from '../ddb'
-import { NumberValue } from '@aws/dynamodb-auto-marshaller'
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client'
 
 // Mock AWS SDK
@@ -43,8 +42,8 @@ describe('ddb utilities', () => {
         stringProp: 'test',
         numberProp: 789,
         nestedObj: {
-          anotherNumber: 456
-        }
+          anotherNumber: 456,
+        },
       }
 
       const result = unwrapNumbers(obj)
@@ -67,8 +66,8 @@ describe('ddb utilities', () => {
     beforeEach(() => {
       mockClient = {
         batchWrite: jest.fn(() => ({
-          promise: jest.fn().mockResolvedValue({})
-        }))
+          promise: jest.fn().mockResolvedValue({}),
+        })),
       } as any
 
       // Mock setTimeout to avoid actual delays in tests
@@ -85,7 +84,7 @@ describe('ddb utilities', () => {
     it('should perform batch put operations', async () => {
       const items = [
         { id: '1', name: 'Item 1' },
-        { id: '2', name: 'Item 2' }
+        { id: '2', name: 'Item 2' },
       ]
       const tableName = 'TestTable'
 
@@ -95,9 +94,9 @@ describe('ddb utilities', () => {
         RequestItems: {
           [tableName]: [
             { PutRequest: { Item: { id: '1', name: 'Item 1' } } },
-            { PutRequest: { Item: { id: '2', name: 'Item 2' } } }
-          ]
-        }
+            { PutRequest: { Item: { id: '2', name: 'Item 2' } } },
+          ],
+        },
       })
       expect(result).toBe(2)
     })
@@ -112,16 +111,16 @@ describe('ddb utilities', () => {
         'delete',
         items,
         tableName,
-        keyName
+        keyName,
       )
 
       expect(mockClient.batchWrite).toHaveBeenCalledWith({
         RequestItems: {
           [tableName]: [
             { DeleteRequest: { Key: { id: '1' } } },
-            { DeleteRequest: { Key: { id: '2' } } }
-          ]
-        }
+            { DeleteRequest: { Key: { id: '2' } } },
+          ],
+        },
       })
       expect(result).toBe(2)
     })
@@ -143,8 +142,8 @@ describe('ddb utilities', () => {
     beforeEach(() => {
       mockClient = {
         batchWrite: jest.fn(() => ({
-          promise: jest.fn().mockResolvedValue({})
-        }))
+          promise: jest.fn().mockResolvedValue({}),
+        })),
       }
 
       mockCallback = jest.fn()
@@ -167,7 +166,7 @@ describe('ddb utilities', () => {
     it('should process items and perform batch operations', async () => {
       const items = [
         { id: '1', name: 'Item 1' },
-        { id: '2', name: 'Item 2' }
+        { id: '2', name: 'Item 2' },
       ]
 
       mockAsyncGenerator = {
@@ -175,13 +174,13 @@ describe('ddb utilities', () => {
           for (const item of items) {
             yield item
           }
-        }
+        },
       }
 
       mockCallback
         .mockResolvedValueOnce({
           isUpdated: true,
-          updateItem: { id: '1', name: 'Updated Item 1' }
+          updateItem: { id: '1', name: 'Updated Item 1' },
         })
         .mockResolvedValueOnce({ isUpdated: false, updateItem: null })
 
@@ -190,7 +189,7 @@ describe('ddb utilities', () => {
         'put',
         mockCallback,
         mockAsyncGenerator,
-        'TestTable'
+        'TestTable',
       )
 
       expect(mockCallback).toHaveBeenCalledTimes(2)
@@ -210,12 +209,12 @@ describe('ddb utilities', () => {
           for (const item of items) {
             yield item
           }
-        }
+        },
       }
 
       // All items are updated
       mockCallback.mockImplementation(() =>
-        Promise.resolve({ isUpdated: true, updateItem: { updated: true } })
+        Promise.resolve({ isUpdated: true, updateItem: { updated: true } }),
       )
 
       await runOpsOnItemSet(
@@ -223,7 +222,7 @@ describe('ddb utilities', () => {
         'put',
         mockCallback,
         mockAsyncGenerator,
-        'TestTable'
+        'TestTable',
       )
 
       // Should call batchWrite twice: once for first 25 items, once for remaining 5
@@ -234,12 +233,12 @@ describe('ddb utilities', () => {
       mockAsyncGenerator = {
         async *[Symbol.asyncIterator]() {
           yield { id: '1' }
-        }
+        },
       }
 
       mockCallback.mockResolvedValue({
         isUpdated: true,
-        updateItem: { id: '1' }
+        updateItem: { id: '1' },
       })
 
       await runOpsOnItemSet(
@@ -249,7 +248,7 @@ describe('ddb utilities', () => {
         mockAsyncGenerator,
         'TestTable',
         undefined,
-        true // quiet mode
+        true, // quiet mode
       )
 
       expect(console.clear).not.toHaveBeenCalled()
@@ -262,7 +261,7 @@ describe('ddb utilities', () => {
 
     beforeEach(() => {
       mockDocClient = {
-        scan: jest.fn()
+        scan: jest.fn(),
       } as any
     })
 
@@ -270,20 +269,20 @@ describe('ddb utilities', () => {
       const mockScanResults = [
         {
           Items: [{ id: '1' }, { id: '2' }],
-          LastEvaluatedKey: { id: '2' }
+          LastEvaluatedKey: { id: '2' },
         },
         {
           Items: [{ id: '3' }],
-          LastEvaluatedKey: undefined
-        }
+          LastEvaluatedKey: undefined,
+        },
       ]
 
       mockDocClient.scan
         .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValue(mockScanResults[0])
+          promise: jest.fn().mockResolvedValue(mockScanResults[0]),
         } as any)
         .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValue(mockScanResults[1])
+          promise: jest.fn().mockResolvedValue(mockScanResults[1]),
         } as any)
 
       const params = { TableName: 'TestTable' }
@@ -302,8 +301,8 @@ describe('ddb utilities', () => {
       mockDocClient.scan.mockReturnValue({
         promise: jest.fn().mockResolvedValue({
           Items: [],
-          LastEvaluatedKey: undefined
-        })
+          LastEvaluatedKey: undefined,
+        }),
       } as any)
 
       const params = { TableName: 'TestTable' }
@@ -326,9 +325,9 @@ describe('ddb utilities', () => {
       mockClient = {
         query: jest.fn(() => ({
           promise: jest.fn().mockResolvedValue({
-            Items: [{ id: '1', name: 'Test Item' }]
-          })
-        }))
+            Items: [{ id: '1', name: 'Test Item' }],
+          }),
+        })),
       }
     })
 
@@ -339,9 +338,9 @@ describe('ddb utilities', () => {
         TableName: 'TestTable',
         KeyConditionExpression: 'pk = :pkey',
         ExpressionAttributeValues: {
-          ':pkey': 'test-value'
+          ':pkey': 'test-value',
         },
-        Limit: 300
+        Limit: 300,
       })
       expect(result.Items).toHaveLength(1)
     })
@@ -354,9 +353,9 @@ describe('ddb utilities', () => {
         KeyConditionExpression: 'pk = :pkey and sk = :skey',
         ExpressionAttributeValues: {
           ':pkey': 'test-pk',
-          ':skey': 'test-sk'
+          ':skey': 'test-sk',
         },
-        Limit: 300
+        Limit: 300,
       })
     })
 
@@ -368,17 +367,17 @@ describe('ddb utilities', () => {
         'test-value',
         undefined,
         undefined,
-        'GSI1'
+        'GSI1',
       )
 
       expect(mockClient.query).toHaveBeenCalledWith({
         TableName: 'TestTable',
         KeyConditionExpression: 'gsi1pk = :pkey',
         ExpressionAttributeValues: {
-          ':pkey': 'test-value'
+          ':pkey': 'test-value',
         },
         Limit: 300,
-        IndexName: 'GSI1'
+        IndexName: 'GSI1',
       })
     })
 
@@ -393,17 +392,17 @@ describe('ddb utilities', () => {
         undefined,
         undefined,
         undefined,
-        lastKey
+        lastKey,
       )
 
       expect(mockClient.query).toHaveBeenCalledWith({
         TableName: 'TestTable',
         KeyConditionExpression: 'pk = :pkey',
         ExpressionAttributeValues: {
-          ':pkey': 'test-value'
+          ':pkey': 'test-value',
         },
         Limit: 300,
-        ExclusiveStartKey: lastKey
+        ExclusiveStartKey: lastKey,
       })
     })
 
@@ -414,16 +413,16 @@ describe('ddb utilities', () => {
         'pk',
         'test-value',
         'sk',
-        null as any
+        null as any,
       )
 
       expect(mockClient.query).toHaveBeenCalledWith({
         TableName: 'TestTable',
         KeyConditionExpression: 'pk = :pkey',
         ExpressionAttributeValues: {
-          ':pkey': 'test-value'
+          ':pkey': 'test-value',
         },
-        Limit: 300
+        Limit: 300,
       })
     })
   })

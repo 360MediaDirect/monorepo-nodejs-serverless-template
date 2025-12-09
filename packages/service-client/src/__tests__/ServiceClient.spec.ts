@@ -1,18 +1,18 @@
 import {
   ServiceClient,
   ServiceClientOptions,
-  InvokeServiceOptions
+  InvokeServiceOptions,
 } from '../index'
 import * as AWS from 'aws-sdk'
 
 // Mock AWS SDK
 const mockInvoke = jest.fn()
 const mockLambda = {
-  invoke: mockInvoke
+  invoke: mockInvoke,
 }
 
 jest.mock('aws-sdk', () => ({
-  Lambda: jest.fn(() => mockLambda)
+  Lambda: jest.fn(() => mockLambda),
 }))
 
 const MockedLambda = AWS.Lambda as jest.MockedClass<typeof AWS.Lambda>
@@ -29,7 +29,7 @@ describe('ServiceClient', () => {
       new ServiceClient()
 
       expect(MockedLambda).toHaveBeenCalledWith({
-        region: 'us-east-1'
+        region: 'us-east-1',
       })
     })
 
@@ -39,33 +39,33 @@ describe('ServiceClient', () => {
       new ServiceClient()
 
       expect(MockedLambda).toHaveBeenCalledWith({
-        region: 'us-west-2'
+        region: 'us-west-2',
       })
     })
 
     it('should use provided region option', () => {
       const options: ServiceClientOptions = {
-        region: 'eu-west-1'
+        region: 'eu-west-1',
       }
 
       new ServiceClient(options)
 
       expect(MockedLambda).toHaveBeenCalledWith({
-        region: 'eu-west-1'
+        region: 'eu-west-1',
       })
     })
 
     it('should use provided endpoint option', () => {
       const options: ServiceClientOptions = {
         region: 'us-east-1',
-        endpoint: 'http://localhost:3001'
+        endpoint: 'http://localhost:3001',
       }
 
       new ServiceClient(options)
 
       expect(MockedLambda).toHaveBeenCalledWith({
         region: 'us-east-1',
-        endpoint: 'http://localhost:3001'
+        endpoint: 'http://localhost:3001',
       })
     })
 
@@ -73,7 +73,7 @@ describe('ServiceClient', () => {
       const options: ServiceClientOptions = {
         region: 'us-east-1',
         accessKeyId: 'test-access-key',
-        secretAccessKey: 'test-secret-key'
+        secretAccessKey: 'test-secret-key',
       }
 
       new ServiceClient(options)
@@ -81,34 +81,34 @@ describe('ServiceClient', () => {
       expect(MockedLambda).toHaveBeenCalledWith({
         region: 'us-east-1',
         accessKeyId: 'test-access-key',
-        secretAccessKey: 'test-secret-key'
+        secretAccessKey: 'test-secret-key',
       })
     })
 
     it('should prioritize provided region over environment variable', () => {
       process.env.AWS_REGION = 'us-west-2'
       const options: ServiceClientOptions = {
-        region: 'eu-west-1'
+        region: 'eu-west-1',
       }
 
       new ServiceClient(options)
 
       expect(MockedLambda).toHaveBeenCalledWith({
-        region: 'eu-west-1'
+        region: 'eu-west-1',
       })
     })
 
     it('should not include credentials when only partial credentials provided', () => {
       const options: ServiceClientOptions = {
         region: 'us-east-1',
-        accessKeyId: 'test-access-key'
+        accessKeyId: 'test-access-key',
         // Missing secretAccessKey
       }
 
       new ServiceClient(options)
 
       expect(MockedLambda).toHaveBeenCalledWith({
-        region: 'us-east-1'
+        region: 'us-east-1',
       })
     })
   })
@@ -121,37 +121,37 @@ describe('ServiceClient', () => {
       client = new ServiceClient()
       mockPromise = jest.fn()
       mockInvoke.mockReturnValue({
-        promise: mockPromise
+        promise: mockPromise,
       })
     })
 
     it('should invoke Lambda function with default parameters', async () => {
       const mockResponse = {
         StatusCode: 200,
-        Payload: JSON.stringify({ result: 'success' })
+        Payload: JSON.stringify({ result: 'success' }),
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeService('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
-        Payload: JSON.stringify({ data: 'test' })
+        Payload: JSON.stringify({ data: 'test' }),
       })
 
       expect(result).toEqual({
         StatusCode: 200,
-        Payload: { result: 'success' }
+        Payload: { result: 'success' },
       })
     })
 
     it('should handle string payload', async () => {
       const mockResponse = {
         StatusCode: 200,
-        Payload: '"Hello World"'
+        Payload: '"Hello World"',
       }
       mockPromise.mockResolvedValue(mockResponse)
 
@@ -160,7 +160,7 @@ describe('ServiceClient', () => {
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
-        Payload: JSON.stringify('hello')
+        Payload: JSON.stringify('hello'),
       })
 
       expect(result.Payload).toBe('Hello World')
@@ -169,7 +169,7 @@ describe('ServiceClient', () => {
     it('should handle null payload', async () => {
       const mockResponse = {
         StatusCode: 200,
-        Payload: 'null'
+        Payload: 'null',
       }
       mockPromise.mockResolvedValue(mockResponse)
 
@@ -178,7 +178,7 @@ describe('ServiceClient', () => {
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
-        Payload: 'null'
+        Payload: 'null',
       })
 
       expect(result.Payload).toBeNull()
@@ -186,12 +186,12 @@ describe('ServiceClient', () => {
 
     it('should handle empty response payload', async () => {
       const mockResponse = {
-        StatusCode: 200
+        StatusCode: 200,
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeService('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(result.Payload).toBeUndefined()
@@ -200,12 +200,12 @@ describe('ServiceClient', () => {
     it('should handle Buffer payload response', async () => {
       const mockResponse = {
         StatusCode: 200,
-        Payload: Buffer.from(JSON.stringify({ result: 'success' }))
+        Payload: Buffer.from(JSON.stringify({ result: 'success' })),
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeService('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(result.Payload).toEqual({ result: 'success' })
@@ -216,7 +216,7 @@ describe('ServiceClient', () => {
       mockPromise.mockResolvedValue(mockResponse)
 
       const options: InvokeServiceOptions = {
-        invocationType: 'Event'
+        invocationType: 'Event',
       }
 
       await client.invokeService('test-function', { data: 'test' }, options)
@@ -224,7 +224,7 @@ describe('ServiceClient', () => {
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'Event',
-        Payload: JSON.stringify({ data: 'test' })
+        Payload: JSON.stringify({ data: 'test' }),
       })
     })
 
@@ -236,7 +236,7 @@ describe('ServiceClient', () => {
         invocationType: 'RequestResponse',
         logType: 'Tail',
         clientContext: 'test-context',
-        qualifier: '$LATEST'
+        qualifier: '$LATEST',
       }
 
       await client.invokeService('test-function', { data: 'test' }, options)
@@ -247,7 +247,7 @@ describe('ServiceClient', () => {
         Payload: JSON.stringify({ data: 'test' }),
         LogType: 'Tail',
         ClientContext: 'test-context',
-        Qualifier: '$LATEST'
+        Qualifier: '$LATEST',
       })
     })
 
@@ -256,18 +256,18 @@ describe('ServiceClient', () => {
         StatusCode: 200,
         FunctionError: 'Unhandled',
         Payload: JSON.stringify({
-          errorMessage: 'Task timed out after 3.00 seconds'
-        })
+          errorMessage: 'Task timed out after 3.00 seconds',
+        }),
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeService('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(result.FunctionError).toBe('Unhandled')
       expect(result.Payload).toEqual({
-        errorMessage: 'Task timed out after 3.00 seconds'
+        errorMessage: 'Task timed out after 3.00 seconds',
       })
     })
 
@@ -276,19 +276,19 @@ describe('ServiceClient', () => {
       mockPromise.mockRejectedValue(error)
 
       await expect(
-        client.invokeService('non-existent-function', { data: 'test' })
+        client.invokeService('non-existent-function', { data: 'test' }),
       ).rejects.toThrow('Function not found')
     })
 
     it('should handle malformed JSON in response payload', async () => {
       const mockResponse = {
         StatusCode: 200,
-        Payload: 'invalid-json'
+        Payload: 'invalid-json',
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       await expect(
-        client.invokeService('test-function', { data: 'test' })
+        client.invokeService('test-function', { data: 'test' }),
       ).rejects.toThrow()
     })
 
@@ -298,12 +298,12 @@ describe('ServiceClient', () => {
         FunctionError: undefined,
         LogResult: 'base64-encoded-logs',
         Payload: JSON.stringify({ result: 'success' }),
-        ExecutedVersion: '$LATEST'
+        ExecutedVersion: '$LATEST',
       }
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeService('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(result).toEqual({
@@ -311,7 +311,7 @@ describe('ServiceClient', () => {
         FunctionError: undefined,
         LogResult: 'base64-encoded-logs',
         Payload: { result: 'success' },
-        ExecutedVersion: '$LATEST'
+        ExecutedVersion: '$LATEST',
       })
     })
   })
@@ -324,7 +324,7 @@ describe('ServiceClient', () => {
       client = new ServiceClient()
       mockPromise = jest.fn()
       mockInvoke.mockReturnValue({
-        promise: mockPromise
+        promise: mockPromise,
       })
     })
 
@@ -333,13 +333,13 @@ describe('ServiceClient', () => {
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.invokeServiceAsync('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'Event',
-        Payload: JSON.stringify({ data: 'test' })
+        Payload: JSON.stringify({ data: 'test' }),
       })
 
       expect(result.StatusCode).toBe(202)
@@ -354,8 +354,8 @@ describe('ServiceClient', () => {
         { data: 'test' },
         {
           logType: 'Tail',
-          qualifier: 'v1'
-        }
+          qualifier: 'v1',
+        },
       )
 
       expect(mockInvoke).toHaveBeenCalledWith({
@@ -363,7 +363,7 @@ describe('ServiceClient', () => {
         InvocationType: 'Event',
         Payload: JSON.stringify({ data: 'test' }),
         LogType: 'Tail',
-        Qualifier: 'v1'
+        Qualifier: 'v1',
       })
     })
   })
@@ -376,7 +376,7 @@ describe('ServiceClient', () => {
       client = new ServiceClient()
       mockPromise = jest.fn()
       mockInvoke.mockReturnValue({
-        promise: mockPromise
+        promise: mockPromise,
       })
     })
 
@@ -385,13 +385,13 @@ describe('ServiceClient', () => {
       mockPromise.mockResolvedValue(mockResponse)
 
       const result = await client.validateInvoke('test-function', {
-        data: 'test'
+        data: 'test',
       })
 
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'DryRun',
-        Payload: JSON.stringify({ data: 'test' })
+        Payload: JSON.stringify({ data: 'test' }),
       })
 
       expect(result.StatusCode).toBe(204)
@@ -405,15 +405,15 @@ describe('ServiceClient', () => {
         'test-function',
         { data: 'test' },
         {
-          clientContext: 'validation-context'
-        }
+          clientContext: 'validation-context',
+        },
       )
 
       expect(mockInvoke).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'DryRun',
         Payload: JSON.stringify({ data: 'test' }),
-        ClientContext: 'validation-context'
+        ClientContext: 'validation-context',
       })
     })
   })
@@ -424,7 +424,9 @@ describe('ServiceClient', () => {
     beforeEach(() => {
       client = new ServiceClient()
       mockInvoke.mockReturnValue({
-        promise: jest.fn().mockResolvedValue({ StatusCode: 200, Payload: '{}' })
+        promise: jest
+          .fn()
+          .mockResolvedValue({ StatusCode: 200, Payload: '{}' }),
       })
     })
 
@@ -441,13 +443,13 @@ describe('ServiceClient', () => {
 
       const payload: TestPayload = {
         userId: '123',
-        action: 'getData'
+        action: 'getData',
       }
 
       // This should compile without TypeScript errors
       const result = await client.invokeService<TestPayload, TestResponse>(
         'test-function',
-        payload
+        payload,
       )
 
       expect(typeof result).toBe('object')

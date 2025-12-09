@@ -13,8 +13,9 @@
     "sourceRoot": "src",
     "esModuleInterop": true,
     "declaration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["jest", "node"]
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/__tests__/**/*"]
+  "exclude": ["node_modules", "dist"]
 }

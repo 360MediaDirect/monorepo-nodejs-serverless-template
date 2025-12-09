@@ -13,7 +13,7 @@ const handleError = (): ErrorHandlerMiddleware => {
       res.json({
         error: showMessage ? message : 'Internal server error',
         ...(e.errors && { details: e.errors }),
-        ...(e.errorCode && { errorCode: e.errorCode })
+        ...(e.errorCode && { errorCode: e.errorCode }),
       })
       if (!res.responseStatus || res.responseStatus >= 500) {
         logger.error('Unexpected error during request', e)

@@ -41,7 +41,7 @@ export class BaseModel implements BaseModelProperties {
     this: new () => T,
     keyObject: Record<string, any>,
     indexName?: string,
-    strongConsistent?: boolean
+    strongConsistent?: boolean,
   ): Promise<T> {
     let partial: Partial<T>
     if (!indexName) {
@@ -49,13 +49,13 @@ export class BaseModel implements BaseModelProperties {
       Object.assign(queryObj, keyObject)
       partial = await mapper
         .get(queryObj, {
-          readConsistency: strongConsistent ? 'strong' : 'eventual'
+          readConsistency: strongConsistent ? 'strong' : 'eventual',
         })
         .then(unwrapNumbers)
     } else {
       for await (const result of mapper.query(this, keyObject, {
         indexName,
-        readConsistency: strongConsistent ? 'strong' : 'eventual'
+        readConsistency: strongConsistent ? 'strong' : 'eventual',
       })) {
         partial = unwrapNumbers(result as T)
       }

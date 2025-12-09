@@ -2,14 +2,14 @@ import { createApp } from '../src/createApp'
 import supertest from 'supertest'
 import path from 'path'
 import * as controllers from '../__fixtures__/controllers'
-import { getEmbassy } from '../../../common/auth/getEmbassy'
+import { getEmbassy } from '@360mediadirect/auth-helper'
 
 const specPath = path.resolve(__dirname, '../__fixtures__/openapi.yml')
 const embassy = getEmbassy()
 const opts = { specPath, embassy, controllers }
 const token = embassy.createToken({
   sub: '123456',
-  email: 'test@test.com'
+  email: 'test@test.com',
 })
 let noScopeToken = ''
 let scopedToken = ''
@@ -21,7 +21,7 @@ const getLogSpy = () => {
     },
     info: jest.fn(),
     warn: jest.fn(),
-    error: jest.fn()
+    error: jest.fn(),
   }
 }
 let log = getLogSpy()
@@ -59,14 +59,14 @@ describe('createApp', () => {
       .post('/baz')
       .send({ user: 'foo', password: 'bar' })
     expect(res.status).toEqual(201)
-    expect(log.info).toBeCalledTimes(2)
+    expect(log.info).toHaveBeenCalledTimes(2)
     expect(log.info.mock.calls[0][1]).toEqual(
       expect.objectContaining({
         body: {
           user: 'foo',
-          password: '(REDACTED)'
-        }
-      })
+          password: '(REDACTED)',
+        },
+      }),
     )
   })
   it('redacts response fields', async () => {
@@ -76,14 +76,14 @@ describe('createApp', () => {
       .send({ user: 'foo', password: 'bar' })
     expect(res.status).toEqual(200)
     expect(res.body).toEqual({ msg: 'foo', token: 'bar' })
-    expect(log.info).toBeCalledTimes(2)
+    expect(log.info).toHaveBeenCalledTimes(2)
     expect(log.info.mock.calls[1][1]).toEqual(
       expect.objectContaining({
         body: {
           msg: 'foo',
-          token: '(REDACTED)'
-        }
-      })
+          token: '(REDACTED)',
+        },
+      }),
     )
   })
   it('sends 500 on JS error throws', async () => {
@@ -91,13 +91,13 @@ describe('createApp', () => {
     const res = await supertest(app).post('/error').send({ foo: 'bar' })
     expect(res.status).toEqual(500)
     expect(res.body).toEqual({ error: 'Internal server error' })
-    expect(log.info).toBeCalledTimes(2)
+    expect(log.info).toHaveBeenCalledTimes(2)
     expect(log.info.mock.calls[1][1]).toEqual(
       expect.objectContaining({
-        body: { error: 'Internal server error' }
-      })
+        body: { error: 'Internal server error' },
+      }),
     )
-    expect(log.error).toBeCalledTimes(1)
+    expect(log.error).toHaveBeenCalledTimes(1)
     expect(log.error.mock.calls[0][1]).toBeInstanceOf(Error)
   })
   it('sends 400 when missing required request fields', async () => {
@@ -106,8 +106,8 @@ describe('createApp', () => {
     expect(res.status).toEqual(400)
     expect(res.body).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining("required property 'foo'")
-      })
+        error: expect.stringContaining("required property 'foo'"),
+      }),
     )
   })
   it('sends 400 when missing improperly formatted fields', async () => {
@@ -116,8 +116,8 @@ describe('createApp', () => {
     expect(res.status).toEqual(400)
     expect(res.body).toEqual(
       expect.objectContaining({
-        error: expect.stringContaining('bar should match format "email"')
-      })
+        error: expect.stringContaining('bar should match format "email"'),
+      }),
     )
   })
   it('sends 401 when calling a secure endpoint with no token', async () => {
@@ -126,8 +126,8 @@ describe('createApp', () => {
     expect(res.status).toEqual(401)
     expect(res.body).toEqual(
       expect.objectContaining({
-        error: 'Authorization header required'
-      })
+        error: 'Authorization header required',
+      }),
     )
   })
   it('sends 401 when calling a secure endpoint with malformed token', async () => {
@@ -176,7 +176,7 @@ describe('createApp', () => {
     const res = await supertest(app).post('/bar').send({ bar: 'bar' })
     expect(res.status).toEqual(204)
     expect(res.body).toEqual({})
-    expect(log.info).not.toBeCalled()
+    expect(log.info).not.toHaveBeenCalled()
   })
   it('allows "body" to be used to redact entire req/res body', async () => {
     const app = createApp({ ...opts, log })
@@ -185,14 +185,14 @@ describe('createApp', () => {
     const res = await supertest(app).put('/bar').send({ bar: 'bar' })
     expect(res.status).toEqual(200)
     expect(res.body).toEqual('bar')
-    expect(log.info).toBeCalledTimes(2)
+    expect(log.info).toHaveBeenCalledTimes(2)
     expect(log.info.mock.calls[0][1]).toHaveProperty(
       'body',
-      'REDACTED object[1]'
+      'REDACTED object[1]',
     )
     expect(log.info.mock.calls[1][1]).toHaveProperty(
       'body',
-      'REDACTED string[3]'
+      'REDACTED string[3]',
     )
   })
 })

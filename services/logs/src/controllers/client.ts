@@ -23,11 +23,11 @@ export const clientLog = createController(async (req, res) => {
           level,
           message,
           data,
-          timestamp: now
-        }
+          timestamp: now,
+        },
       }),
       MessageDeduplicationId: `${id}_${now}`,
-      MessageGroupId: `${process.env.LOG_WAREHOUSE_TABLE_NAME}_${id}`
+      MessageGroupId: `${process.env.LOG_WAREHOUSE_TABLE_NAME}_${id}`,
     }
     await sns.publish(msg).promise()
   }

@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "major": 1,
+  "description": "Root API service",
+  "main": "dist/index.js",
+  "author": "Tom Shawver <tom@360mediadirect.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "clean": "rm -rf ./.serverless ./dist"
+  },
+  "files": [
+    "./dist/*"
+  ]
+}

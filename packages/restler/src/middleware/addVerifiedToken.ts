@@ -9,7 +9,7 @@ const addVerifiedToken = (embassy: Embassy): Middleware => {
     const match = auth.match(/^\s*Bearer (\S+)\s*$/)
     if (match) {
       log.info('Authorization header is Bearer', {
-        reqId: req.id
+        reqId: req.id,
       })
     } else {
       return next()

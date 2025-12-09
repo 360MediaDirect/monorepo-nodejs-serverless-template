@@ -31,7 +31,9 @@ export class ServiceClient {
     this.lambda = new Lambda({
       region: region || process.env.AWS_REGION || 'us-east-1',
       ...(endpoint && { endpoint }),
-      ...(credentials.accessKeyId && credentials.secretAccessKey && credentials)
+      ...(credentials.accessKeyId &&
+        credentials.secretAccessKey &&
+        credentials),
     })
   }
 
@@ -45,13 +47,13 @@ export class ServiceClient {
   async invokeService<TPayload = any, TResponse = any>(
     serviceHandler: string,
     payload: TPayload,
-    options: InvokeServiceOptions = {}
+    options: InvokeServiceOptions = {},
   ): Promise<ServiceResponse<TResponse>> {
     const {
       invocationType = 'RequestResponse',
       logType,
       clientContext,
-      qualifier
+      qualifier,
     } = options
 
     const response = await this.lambda
@@ -61,7 +63,7 @@ export class ServiceClient {
         Payload: JSON.stringify(payload),
         ...(logType && { LogType: logType }),
         ...(clientContext && { ClientContext: clientContext }),
-        ...(qualifier && { Qualifier: qualifier })
+        ...(qualifier && { Qualifier: qualifier }),
       })
       .promise()
 
@@ -69,7 +71,7 @@ export class ServiceClient {
       ...response,
       Payload: response.Payload
         ? JSON.parse(response.Payload.toString())
-        : undefined
+        : undefined,
     }
   }
 
@@ -83,11 +85,11 @@ export class ServiceClient {
   async invokeServiceAsync<TPayload = any>(
     serviceHandler: string,
     payload: TPayload,
-    options: Omit<InvokeServiceOptions, 'invocationType'> = {}
+    options: Omit<InvokeServiceOptions, 'invocationType'> = {},
   ): Promise<ServiceResponse<void>> {
     return this.invokeService(serviceHandler, payload, {
       ...options,
-      invocationType: 'Event'
+      invocationType: 'Event',
     })
   }
 
@@ -101,11 +103,11 @@ export class ServiceClient {
   async validateInvoke<TPayload = any>(
     serviceHandler: string,
     payload: TPayload,
-    options: Omit<InvokeServiceOptions, 'invocationType'> = {}
+    options: Omit<InvokeServiceOptions, 'invocationType'> = {},
   ): Promise<ServiceResponse<void>> {
     return this.invokeService(serviceHandler, payload, {
       ...options,
-      invocationType: 'DryRun'
+      invocationType: 'DryRun',
     })
   }
 }

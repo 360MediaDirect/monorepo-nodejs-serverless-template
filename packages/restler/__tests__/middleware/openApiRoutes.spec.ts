@@ -5,12 +5,14 @@ import log from '@360mediadirect/log'
 
 // Mock the dependencies
 jest.mock('express-openapi-validator', () => ({
-  middleware: jest.fn()
+  middleware: jest.fn(),
 }))
 jest.mock('http-errors')
 jest.mock('@360mediadirect/log')
 
-const { middleware: mockOpenApiMiddleware } = require('express-openapi-validator')
+const {
+  middleware: mockOpenApiMiddleware,
+} = require('express-openapi-validator')
 const mockCreateError = createError as jest.MockedFunction<typeof createError>
 const mockLog = log as jest.Mocked<typeof log>
 
@@ -21,15 +23,15 @@ describe('openApiRoutes middleware', () => {
   beforeEach(() => {
     mockController = jest.fn()
     controllers = {
-      'getUserById': mockController,
-      'createUser': mockController
+      getUserById: mockController,
+      createUser: mockController,
     }
     jest.clearAllMocks()
   })
 
   it('should call openApiMiddleware with correct configuration', () => {
     const apiSpec = { paths: {} }
-    
+
     mockOpenApiMiddleware.mockReturnValue([])
 
     openApiRoutes(apiSpec, controllers)
@@ -38,15 +40,15 @@ describe('openApiRoutes middleware', () => {
       apiSpec,
       operationHandlers: {
         basePath: '',
-        resolver: expect.any(Function)
+        resolver: expect.any(Function),
       },
       validateSecurity: {
         handlers: {
           BasicAuth: expect.any(Function),
           JWTAuth: expect.any(Function),
-          Internal: expect.any(Function)
-        }
-      }
+          Internal: expect.any(Function),
+        },
+      },
     })
   })
 
@@ -67,15 +69,15 @@ describe('openApiRoutes middleware', () => {
         paths: {
           '/users/{id}': {
             get: {
-              operationId: 'getUserById'
-            }
+              operationId: 'getUserById',
+            },
           },
           '/users': {
             post: {
-              operationId: 'createUser'
-            }
-          }
-        }
+              operationId: 'createUser',
+            },
+          },
+        },
       }
     })
 
@@ -85,7 +87,7 @@ describe('openApiRoutes middleware', () => {
         expressRoute: '/users/123',
         openApiRoute: '/users/{id}',
         method: 'GET',
-        pathParams: { id: '123' }
+        pathParams: { id: '123' },
       }
 
       const result = resolver('', route, apiDoc)
@@ -99,17 +101,17 @@ describe('openApiRoutes middleware', () => {
         expressRoute: '/unknown',
         openApiRoute: '/unknown',
         method: 'GET',
-        pathParams: {}
+        pathParams: {},
       }
 
       const apiDocWithUnknown = {
         paths: {
           '/unknown': {
             get: {
-              operationId: 'unknownController'
-            }
-          }
-        }
+              operationId: 'unknownController',
+            },
+          },
+        },
       }
 
       const error = new Error('Not Found')
@@ -121,8 +123,8 @@ describe('openApiRoutes middleware', () => {
         {
           basePath: '',
           pathKey: '/unknown',
-          controllerId: 'unknownController'
-        }
+          controllerId: 'unknownController',
+        },
       )
       expect(mockCreateError).toHaveBeenCalledWith(404)
     })
@@ -133,7 +135,7 @@ describe('openApiRoutes middleware', () => {
         expressRoute: '/users',
         openApiRoute: '/users',
         method: 'GET',
-        pathParams: {}
+        pathParams: {},
       }
 
       const apiDocWithoutOperationId = {
@@ -141,9 +143,9 @@ describe('openApiRoutes middleware', () => {
           '/users': {
             get: {
               // No operationId
-            }
-          }
-        }
+            },
+          },
+        },
       }
 
       const error = new Error('Not Found')
@@ -159,17 +161,17 @@ describe('openApiRoutes middleware', () => {
         expressRoute: '/api/v1/users/123',
         openApiRoute: '/api/v1/users/{id}',
         method: 'GET',
-        pathParams: { id: '123' }
+        pathParams: { id: '123' },
       }
 
       const apiDocWithBasePath = {
         paths: {
           '/users/{id}': {
             get: {
-              operationId: 'getUserById'
-            }
-          }
-        }
+              operationId: 'getUserById',
+            },
+          },
+        },
       }
 
       const result = resolver('/api/v1', route, apiDocWithBasePath)
@@ -221,10 +223,10 @@ describe('openApiRoutes middleware', () => {
 
     describe('JWTAuth handler', () => {
       it('should return true when token exists and no scopes required', async () => {
-        const req = { 
-          token: { 
-            hasScopes: jest.fn().mockResolvedValue(true) 
-          } 
+        const req = {
+          token: {
+            hasScopes: jest.fn().mockResolvedValue(true),
+          },
         } as any
 
         const result = await securityHandlers.JWTAuth(req, [])
@@ -233,10 +235,10 @@ describe('openApiRoutes middleware', () => {
       })
 
       it('should return true when token has required scopes', async () => {
-        const req = { 
-          token: { 
-            hasScopes: jest.fn().mockResolvedValue(true) 
-          } 
+        const req = {
+          token: {
+            hasScopes: jest.fn().mockResolvedValue(true),
+          },
         } as any
 
         const result = await securityHandlers.JWTAuth(req, ['read', 'write'])
@@ -255,10 +257,10 @@ describe('openApiRoutes middleware', () => {
       })
 
       it('should throw 403 when token lacks required scopes', async () => {
-        const req = { 
-          token: { 
-            hasScopes: jest.fn().mockResolvedValue(false) 
-          } 
+        const req = {
+          token: {
+            hasScopes: jest.fn().mockResolvedValue(false),
+          },
         } as any
         const error = new Error('Forbidden')
         mockCreateError.mockReturnValue(error as any)
@@ -268,10 +270,10 @@ describe('openApiRoutes middleware', () => {
       })
 
       it('should handle undefined scopes', async () => {
-        const req = { 
-          token: { 
-            hasScopes: jest.fn() 
-          } 
+        const req = {
+          token: {
+            hasScopes: jest.fn(),
+          },
         } as any
 
         const result = await securityHandlers.JWTAuth(req, undefined)

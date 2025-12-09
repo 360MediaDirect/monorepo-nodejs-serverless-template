@@ -5,7 +5,7 @@ describe('redact', () => {
     const obj = {
       username: 'testuser',
       password: 'secret123',
-      email: 'test@example.com'
+      email: 'test@example.com',
     }
 
     const result = redact(obj, ['password'])
@@ -13,7 +13,7 @@ describe('redact', () => {
     expect(result).toEqual({
       username: 'testuser',
       password: '(REDACTED)',
-      email: 'test@example.com'
+      email: 'test@example.com',
     })
   })
 
@@ -22,7 +22,7 @@ describe('redact', () => {
       username: 'testuser',
       password: 'secret123',
       token: 'abc123',
-      email: 'test@example.com'
+      email: 'test@example.com',
     }
 
     const result = redact(obj, ['password', 'token'])
@@ -31,21 +31,21 @@ describe('redact', () => {
       username: 'testuser',
       password: '(REDACTED)',
       token: '(REDACTED)',
-      email: 'test@example.com'
+      email: 'test@example.com',
     })
   })
 
   it('should handle fields that do not exist in the object', () => {
     const obj = {
       username: 'testuser',
-      email: 'test@example.com'
+      email: 'test@example.com',
     }
 
     const result = redact(obj, ['password', 'token'])
 
     expect(result).toEqual({
       username: 'testuser',
-      email: 'test@example.com'
+      email: 'test@example.com',
     })
   })
 
@@ -53,7 +53,7 @@ describe('redact', () => {
     const obj = {
       username: 'testuser',
       password: 'secret123',
-      nested: { secret: 'value' }
+      nested: { secret: 'value' },
     }
 
     const result = redact(obj, ['password'])
@@ -77,14 +77,14 @@ describe('redact', () => {
   it('should handle empty fields array', () => {
     const obj = {
       username: 'testuser',
-      password: 'secret123'
+      password: 'secret123',
     }
 
     const result = redact(obj, [])
 
     expect(result).toEqual({
       username: 'testuser',
-      password: 'secret123'
+      password: 'secret123',
     })
   })
 
@@ -92,7 +92,7 @@ describe('redact', () => {
     const obj = {
       ownProp: 'own',
       secret: 'secret123',
-      publicData: 'public'
+      publicData: 'public',
     }
 
     const result = redact(obj, ['secret', 'nonExistentField'])
@@ -113,7 +113,7 @@ describe('redact', () => {
       array: [1, 2, 3],
       object: { nested: 'value' },
       nullValue: null,
-      undefinedValue: undefined
+      undefinedValue: undefined,
     }
 
     const result = redact(obj, ['number', 'boolean', 'array', 'nullValue'])
@@ -125,7 +125,7 @@ describe('redact', () => {
       array: '(REDACTED)',
       object: { nested: 'value' },
       nullValue: '(REDACTED)',
-      undefinedValue: undefined
+      undefinedValue: undefined,
     })
   })
 
@@ -134,7 +134,7 @@ describe('redact', () => {
     const obj = {
       normalProp: 'normal',
       secretProp: 'secret',
-      [sym]: 'symbol value'
+      [sym]: 'symbol value',
     }
 
     const result = redact(obj, ['secretProp', 'symbol'])

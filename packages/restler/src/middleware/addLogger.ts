@@ -19,10 +19,10 @@ const addLogger = (log?: Logger): Middleware => {
       isInternal: !!req.isInternal,
       ...(req.apiGateway && {
         awsRequestId: req.apiGateway.context.awsRequestId,
-        ipAddress: req.apiGateway.event.requestContext.identity.sourceIp
+        ipAddress: req.apiGateway.event.requestContext.identity.sourceIp,
       }),
       ...(req.id && { reqId: req.id }),
-      ...(claims && { claims })
+      ...(claims && { claims }),
     })
     next()
   }

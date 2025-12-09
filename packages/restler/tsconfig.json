@@ -12,8 +12,9 @@
     "esModuleInterop": true,
     "declaration": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["jest", "node"]
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./**/__tests__/*", "./**/.webpack/**/*", "./**/_warmup/**/*"]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist", "./**/.webpack/**/*", "./**/_warmup/**/*"]
 }

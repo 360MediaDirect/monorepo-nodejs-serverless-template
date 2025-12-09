@@ -30,7 +30,7 @@ export const doBatchOp = async (
   operation: 'read' | 'put' | 'delete',
   items: any[],
   tableName: string,
-  keyName?: string // only for delete
+  keyName?: string, // only for delete
 ): Promise<number> => {
   if (operation === 'put') {
     await client
@@ -39,11 +39,11 @@ export const doBatchOp = async (
           [tableName]: items.map((item) => {
             return {
               PutRequest: {
-                Item: item
-              }
+                Item: item,
+              },
             }
-          })
-        }
+          }),
+        },
       })
       .promise()
   } else if (operation === 'delete') {
@@ -54,12 +54,12 @@ export const doBatchOp = async (
             return {
               DeleteRequest: {
                 Key: {
-                  [keyName as string]: item[keyName as string]
-                }
-              }
+                  [keyName as string]: item[keyName as string],
+                },
+              },
             }
-          })
-        }
+          }),
+        },
       })
       .promise()
   }
@@ -76,7 +76,7 @@ export const runOpsOnItemSet = async (
   asyncGenerator: any,
   tableName: string,
   keyName?: string,
-  isQuiet?: boolean
+  isQuiet?: boolean,
 ): Promise<void> => {
   let updateItems: any = []
   let totalReadCount = 0
@@ -87,7 +87,7 @@ export const runOpsOnItemSet = async (
     if (!isQuiet) {
       console.clear()
       console.log(
-        `${totalReadCount} records read; ${totalWriteCount} records written`
+        `${totalReadCount} records read; ${totalWriteCount} records written`,
       )
     }
 
@@ -100,13 +100,13 @@ export const runOpsOnItemSet = async (
         operation,
         updateItems,
         tableName,
-        keyName
+        keyName,
       )
       updateItems = []
       if (!isQuiet) {
         console.clear()
         console.log(
-          `${totalReadCount} records read; ${totalWriteCount} records written`
+          `${totalReadCount} records read; ${totalWriteCount} records written`,
         )
       }
     }
@@ -118,12 +118,12 @@ export const runOpsOnItemSet = async (
       operation,
       updateItems,
       tableName,
-      keyName
+      keyName,
     )
     if (!isQuiet) {
       console.clear()
       console.log(
-        `${totalReadCount} records read; ${totalWriteCount} records written`
+        `${totalReadCount} records read; ${totalWriteCount} records written`,
       )
     }
   }
@@ -131,7 +131,7 @@ export const runOpsOnItemSet = async (
 
 export async function* autoPaginateScan<I extends DocumentClient.AttributeMap>(
   docClient: DocumentClient,
-  params: DocumentClient.ScanInput
+  params: DocumentClient.ScanInput,
 ) {
   while (true) {
     const data = await docClient.scan(params).promise()
@@ -157,15 +157,15 @@ export const runQuery = async (
   rangeField?: string,
   rangeValue?: string,
   indexName?: string,
-  lastEvaluatedKey?: any
+  lastEvaluatedKey?: any,
 ): Promise<any> => {
   const queryParams: any = {
     TableName: tableName,
     KeyConditionExpression: `${hashField} = :pkey`,
     ExpressionAttributeValues: {
-      ':pkey': hashValue
+      ':pkey': hashValue,
     },
-    Limit: 300
+    Limit: 300,
   }
 
   // console.log(hashField, hashValue, rangeField, rangeValue)

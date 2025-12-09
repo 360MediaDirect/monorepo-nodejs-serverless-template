@@ -11,33 +11,35 @@
     "lint-staged": "lint-staged",
     "test": "npm run lint && LOG_SILENT=1 jest --coverage --runInBand",
     "test:watch": "LOG_SILENT=1 jest --watch --colors --runInBand",
-    "clean": "rm -rf coverage node_modules .webpack dist"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testMatch": [
-      "**/__tests__/**/*.spec.{js,ts}?(x)"
-    ],
-    "testEnvironment": "node",
-    "verbose": true,
-    "testPathIgnorePatterns": [],
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!@360mediadirect|uuid)/"
-    ],
-    "moduleNameMapper": {
-      "^@360mediadirect/(api-client|emailer|modeler|restler|service-client)$": "<rootDir>/../../packages/$1/src",
-      "^uuid$": "<rootDir>/../../node_modules/uuid/dist/cjs"
-    }
+    "clean": "rm -rf coverage"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "@360mediadirect/auth-helper": "^1.0.0",
+    "@360mediadirect/log": "^1.1.1",
+    "@360mediadirect/restler": "^1.0.0",
+    "aws-sdk": "^2.1692.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
   }
 }
