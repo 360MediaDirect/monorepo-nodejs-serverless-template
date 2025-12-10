@@ -22,7 +22,6 @@ monorepo-nodejs-serverless-template/
 │   └── logs/
 ├── ui/                # Frontend applications
 ├── common/            # Shared common files
-└── infra/             # Infrastructure as code
 ```
 
 ## Prerequisites
@@ -39,6 +38,7 @@ yarn install
 ```
 
 This command:
+
 - Installs all dependencies using Yarn PnP (no `node_modules` folder)
 - Creates `.pnp.cjs` for dependency resolution
 - Builds native packages (nx, tree-sitter, etc.)
@@ -52,6 +52,7 @@ yarn dlx @yarnpkg/sdks vscode
 ```
 
 This creates:
+
 - `.yarn/sdks/typescript/` - TypeScript language server SDK
 - `.yarn/sdks/eslint/` - ESLint SDK
 - `.yarn/sdks/prettier/` - Prettier SDK
@@ -74,6 +75,7 @@ This project uses **Yarn Plug'n'Play** instead of traditional `node_modules`:
 - ⚠️ **Requires IDE SDK** - Your editor needs the SDK to resolve types
 
 If you see TypeScript errors about missing modules, make sure you've:
+
 1. Run `yarn install`
 2. Generated SDKs with `yarn dlx @yarnpkg/sdks vscode`
 3. Reloaded VS Code
@@ -162,6 +164,7 @@ The repository includes pre-configured VS Code settings (`.vscode/settings.json`
 - Yarn set as package manager
 
 Recommended extensions (`.vscode/extensions.json`):
+
 - `arcanis.vscode-zipfs` - For PnP zip file support
 - `esbenp.prettier-vscode` - Code formatting
 - `dbaeumer.vscode-eslint` - Linting
