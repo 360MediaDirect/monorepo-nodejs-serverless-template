@@ -3,8 +3,8 @@ export const JWT_ALGORITHM = 'ES256'
 
 // Product Types
 export const PRODUCTS = {
-  LIBRARY: 'library',
-  PORTAL: 'portal',
+  ADMIN: 'admin',
+  DASHBOARD: 'dashboard',
 } as const
 
 // Environment/Stage Values
@@ -39,12 +39,12 @@ export const SSM_CONFIG = {
 
 // Parameter Store Paths
 export const PARAMETER_PATHS = {
-  PRIVATE_KEY: (kid: string) => `/distroslate/auth/keys/private/${kid}`,
-  PUBLIC_KEY: (kid: string) => `/distroslate/auth/keys/public/${kid}`,
+  PRIVATE_KEY: (kid: string) => `/example/auth/keys/private/${kid}`,
+  PUBLIC_KEY: (kid: string) => `/example/auth/keys/public/${kid}`,
 } as const
 
 // Audience Configuration
 export const AUDIENCE_CONFIG = {
   AUDIENCE_PREFIX: 'api',
-  AUDIENCE_SUFFIX: '.distroslate',
+  AUDIENCE_SUFFIX: '.example',
 } as const

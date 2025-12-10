@@ -10,8 +10,8 @@ export const AUTH_ERROR_CODES = {
 
 // Product Types
 export const PRODUCTS = {
-  LIBRARY: 'library',
-  PORTAL: 'portal',
+  ADMIN: 'admin',
+  DASHBOARD: 'dashboard',
 } as const
 
 // Environment/Stage Values
@@ -35,8 +35,8 @@ export const DEFAULTS = {
 
 // Magic Link Templates
 export const MAGIC_LINK_TEMPLATES = {
-  DEFAULT: 'magic-link',
-  PORTAL: 'portal',
+  ADMIN: 'admin',
+  DASHBOARD: 'dashboard',
 } as const
 
 // Allowed URL Domains

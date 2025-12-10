@@ -74,8 +74,7 @@
                   },
                   "product": {
                     "type": "string",
-                    "enum": ["library", "portal", "polls"],
-                    "description": "Specifies whether this link is for the library or the reporting portal. This controls the email template that is sent out."
+                    "enum": ["admin", "dashboard"]
                   },
                   "url": {
                     "type": "string",
@@ -175,12 +174,11 @@
                   },
                   "product": {
                     "type": "string",
-                    "enum": ["library", "portal", "polls"],
-                    "description": "Specifies whether this link is for the library or the reporting portal."
+                    "enum": ["admin", "dashboard"]
                   }
                 },
                 "example": {
-                  "product": "library",
+                  "product": "admin",
                   "token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjAxMjI0In0.eyJzdWIiOiJmMjU2Y2IwMS02NTRiLTRjYzItYWFhMC1lNTI3YTMwYTAwYTUiLCJlbWFpbCI6InRlc3RAYWRpZXUuY29tIiwicHJtIjoiIiwiaWF0IjoxNjA5NzQxMTYzLCJleHAiOjE2NDEyNzcxNjMsImF1ZCI6ImFwaS1wcjY4LmFkaWV1LmNvbS9hdXRoIiwiaXNzIjoiYXBpLXByNjguYWRpZXUuY29tL2F1dGgifQ.lyMIqVwJX-RX9WRoUxeAaL6kVGI4xkec3TCaRs2hffK51ov0WY0D4AtzbzTY2Sgcd1s4nHlFthHxKmZIL_Fekg"
                 }
               }
