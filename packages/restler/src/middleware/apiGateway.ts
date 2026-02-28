@@ -3,9 +3,16 @@ import { Middleware } from '../types'
 
 const apiGateway = (): Middleware => {
   return (req, res, next) => {
-    if (req.get('x-apigateway-event') || req.get('x-apigateway-context')) {
-      req.apiGateway = getCurrentInvoke()
-    } else next()
+    // Always try to get the current invoke for API Gateway requests
+    try {
+      const invoke = getCurrentInvoke()
+      if (invoke?.event) {
+        req.apiGateway = invoke
+      }
+    } catch {
+      // Not running in Lambda/API Gateway context, ignore
+    }
+    next()
   }
 }
 

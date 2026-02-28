@@ -3,19 +3,22 @@ import {
   ServiceClientOptions,
   InvokeServiceOptions,
 } from '../index'
-import * as AWS from 'aws-sdk'
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda'
 
-// Mock AWS SDK
-const mockInvoke = jest.fn()
-const mockLambda = {
-  invoke: mockInvoke,
-}
+// Mock AWS SDK v3
+const mockSend = jest.fn()
 
-jest.mock('aws-sdk', () => ({
-  Lambda: jest.fn(() => mockLambda),
+jest.mock('@aws-sdk/client-lambda', () => ({
+  LambdaClient: jest.fn(() => ({
+    send: mockSend,
+  })),
+  InvokeCommand: jest.fn((params) => params),
 }))
 
-const MockedLambda = AWS.Lambda as jest.MockedClass<typeof AWS.Lambda>
+const MockedLambdaClient = LambdaClient as jest.MockedClass<typeof LambdaClient>
+const MockedInvokeCommand = InvokeCommand as jest.MockedClass<
+  typeof InvokeCommand
+>
 
 describe('ServiceClient', () => {
   beforeEach(() => {
@@ -28,7 +31,7 @@ describe('ServiceClient', () => {
     it('should create ServiceClient with default options', () => {
       new ServiceClient()
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'us-east-1',
       })
     })
@@ -38,7 +41,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient()
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'us-west-2',
       })
     })
@@ -50,7 +53,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient(options)
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'eu-west-1',
       })
     })
@@ -63,7 +66,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient(options)
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'us-east-1',
         endpoint: 'http://localhost:3001',
       })
@@ -78,7 +81,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient(options)
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'us-east-1',
         accessKeyId: 'test-access-key',
         secretAccessKey: 'test-secret-key',
@@ -93,7 +96,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient(options)
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'eu-west-1',
       })
     })
@@ -107,7 +110,7 @@ describe('ServiceClient', () => {
 
       new ServiceClient(options)
 
-      expect(MockedLambda).toHaveBeenCalledWith({
+      expect(MockedLambdaClient).toHaveBeenCalledWith({
         region: 'us-east-1',
       })
     })
@@ -120,9 +123,7 @@ describe('ServiceClient', () => {
     beforeEach(() => {
       client = new ServiceClient()
       mockPromise = jest.fn()
-      mockInvoke.mockReturnValue({
-        promise: mockPromise,
-      })
+      mockSend.mockImplementation(() => mockPromise())
     })
 
     it('should invoke Lambda function with default parameters', async () => {
@@ -136,7 +137,7 @@ describe('ServiceClient', () => {
         data: 'test',
       })
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
         Payload: JSON.stringify({ data: 'test' }),
@@ -157,7 +158,7 @@ describe('ServiceClient', () => {
 
       const result = await client.invokeService('test-function', 'hello')
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
         Payload: JSON.stringify('hello'),
@@ -175,7 +176,7 @@ describe('ServiceClient', () => {
 
       const result = await client.invokeService('test-function', null)
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
         Payload: 'null',
@@ -221,7 +222,7 @@ describe('ServiceClient', () => {
 
       await client.invokeService('test-function', { data: 'test' }, options)
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'Event',
         Payload: JSON.stringify({ data: 'test' }),
@@ -241,7 +242,7 @@ describe('ServiceClient', () => {
 
       await client.invokeService('test-function', { data: 'test' }, options)
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'RequestResponse',
         Payload: JSON.stringify({ data: 'test' }),
@@ -323,9 +324,7 @@ describe('ServiceClient', () => {
     beforeEach(() => {
       client = new ServiceClient()
       mockPromise = jest.fn()
-      mockInvoke.mockReturnValue({
-        promise: mockPromise,
-      })
+      mockSend.mockImplementation(() => mockPromise())
     })
 
     it('should invoke Lambda function asynchronously', async () => {
@@ -336,7 +335,7 @@ describe('ServiceClient', () => {
         data: 'test',
       })
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'Event',
         Payload: JSON.stringify({ data: 'test' }),
@@ -358,7 +357,7 @@ describe('ServiceClient', () => {
         },
       )
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'Event',
         Payload: JSON.stringify({ data: 'test' }),
@@ -375,9 +374,7 @@ describe('ServiceClient', () => {
     beforeEach(() => {
       client = new ServiceClient()
       mockPromise = jest.fn()
-      mockInvoke.mockReturnValue({
-        promise: mockPromise,
-      })
+      mockSend.mockImplementation(() => mockPromise())
     })
 
     it('should perform dry run invocation', async () => {
@@ -388,7 +385,7 @@ describe('ServiceClient', () => {
         data: 'test',
       })
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'DryRun',
         Payload: JSON.stringify({ data: 'test' }),
@@ -409,7 +406,7 @@ describe('ServiceClient', () => {
         },
       )
 
-      expect(mockInvoke).toHaveBeenCalledWith({
+      expect(MockedInvokeCommand).toHaveBeenCalledWith({
         FunctionName: 'test-function',
         InvocationType: 'DryRun',
         Payload: JSON.stringify({ data: 'test' }),
@@ -423,11 +420,7 @@ describe('ServiceClient', () => {
 
     beforeEach(() => {
       client = new ServiceClient()
-      mockInvoke.mockReturnValue({
-        promise: jest
-          .fn()
-          .mockResolvedValue({ StatusCode: 200, Payload: '{}' }),
-      })
+      mockSend.mockResolvedValue({ StatusCode: 200, Payload: '{}' })
     })
 
     it('should support typed payload and response', async () => {

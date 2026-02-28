@@ -2,9 +2,9 @@
   "name": "@360mediadirect/restler",
   "version": "1.0.0",
   "description": "RESTify controllers in services",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "author": "Tom Shawver <tom@360mediadirect.com>",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "author": "Steve Yardumian <steve@360mediadirect.com>",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=22.x"
@@ -54,14 +54,15 @@
   },
   "dependencies": {
     "@360mediadirect/auth-helper": "^1.0.0",
-    "@360mediadirect/log": "^1.1.1",
+    "@360mediadirect/embassy": "^2.0.5",
+    "@360mediadirect/log": "^1.1.2",
+    "@aws-sdk/client-dynamodb": "^3.953.0",
+    "@aws-sdk/lib-dynamodb": "^3.953.0",
     "@codegenie/serverless-express": "^4.17.1",
-    "aws-lambda": "^1.0.7",
-    "embassy": "^2.0.4",
     "express": "^5.2.1",
     "express-openapi-validator": "^5.6.0",
     "http-errors": "^2.0.1",
-    "qs": "^6.14.0",
+    "qs": "^6.14.1",
     "shortid": "^2.2.17"
   },
   "jest": {

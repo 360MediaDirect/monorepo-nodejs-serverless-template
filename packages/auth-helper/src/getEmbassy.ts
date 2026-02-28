@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Embassy, PrivateKeyDefinition } from 'embassy'
-import SSM from 'aws-sdk/clients/ssm'
+import { Embassy, PrivateKeyDefinition } from '@360mediadirect/embassy'
+import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
 import domainScopes from './domainScopes.json'
 import {
   DEFAULTS,
@@ -18,7 +18,6 @@ const TOKEN_EXPIRATION_SECS = process.env.TOKEN_EXPIRATION_SECS
 const STAGE = process.env.STAGE || DEFAULTS.STAGE
 
 const ssmOpts = {
-  apiVersion: SSM_CONFIG.API_VERSION,
   region: process.env.REGION || SSM_CONFIG.DEFAULT_REGION,
 }
 
@@ -47,7 +46,7 @@ export const issuer = `${audience}/auth`
 /**
  *  The Embassy class... just in case anyone needs it.
  */
-export * from 'embassy'
+export * from '@360mediadirect/embassy'
 
 /**
  * Inspects an error that occurred during key retrieval and returns it again.
@@ -67,7 +66,7 @@ const getThrowableError = (e: Error, kid: string): Error => {
 }
 
 interface GetEmbassyOptions {
-  ssm?: SSM
+  ssm?: SSMClient
   audience?: string
   issuer?: string
   expiresInSecs?: number
@@ -82,7 +81,7 @@ interface GetEmbassyOptions {
  * public and private keys from Parameter Store
  */
 export const getEmbassy = (opts: GetEmbassyOptions = {}): Embassy => {
-  const ssm = opts.ssm || new SSM(ssmOpts)
+  const ssm = opts.ssm || new SSMClient(ssmOpts)
   return new Embassy({
     expiresInSecs: opts.expiresInSecs || TOKEN_EXPIRATION_SECS,
     audience: opts.audience || audience,
@@ -113,7 +112,7 @@ export const getEmbassy = (opts: GetEmbassyOptions = {}): Embassy => {
         WithDecryption: true,
       }
       try {
-        const res = await ssm.getParameter(params).promise()
+        const res = await ssm.send(new GetParameterCommand(params))
         if (!res.Parameter?.Value) throw new Error('Key not found')
         return {
           privateKey: res.Parameter.Value,
@@ -139,7 +138,7 @@ export const getEmbassy = (opts: GetEmbassyOptions = {}): Embassy => {
       }
       const params = { Name: PARAMETER_PATHS.PUBLIC_KEY(kid) }
       try {
-        const res = await ssm.getParameter(params).promise()
+        const res = await ssm.send(new GetParameterCommand(params))
         if (!res.Parameter?.Value) throw new Error('Key not found')
         return res.Parameter.Value
       } catch (e) {

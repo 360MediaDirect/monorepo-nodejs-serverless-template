@@ -5,5 +5,5 @@ export { issuer }
 export const magicAudience = `${issuer}/magic`
 
 export const getSigningKeyId = (): string => {
-  return process.env.SIGNING_KEY_ID || '20230317'
+  return process.env.SIGNING_KEY_ID || '20251211'
 }

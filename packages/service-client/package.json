@@ -29,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "aws-sdk": "^2.1692.0"
+    "@aws-sdk/client-lambda": "^3.699.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

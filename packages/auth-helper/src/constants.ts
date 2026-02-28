@@ -4,7 +4,6 @@ export const JWT_ALGORITHM = 'ES256'
 // Product Types
 export const PRODUCTS = {
   ADMIN: 'admin',
-  DASHBOARD: 'dashboard',
 } as const
 
 // Environment/Stage Values
@@ -17,7 +16,7 @@ export const ENVIRONMENTS = {
 
 // Default Values
 export const DEFAULTS = {
-  TOKEN_EXPIRATION_SECS: 3600,
+  TOKEN_EXPIRATION_SECS: 86400, // 24 hours
   MAGIC_EXPIRATION_SECS: 3600 * 24, // 1 day
   REFRESH_DURATION: 365 * 24 * 60 * 60, // 1 year in seconds
   MAX_ENABLED_CLIENTS: 8,
@@ -39,12 +38,12 @@ export const SSM_CONFIG = {
 
 // Parameter Store Paths
 export const PARAMETER_PATHS = {
-  PRIVATE_KEY: (kid: string) => `/example/auth/keys/private/${kid}`,
-  PUBLIC_KEY: (kid: string) => `/example/auth/keys/public/${kid}`,
+  PRIVATE_KEY: (kid: string) => `/auth/keys/private/${kid}`,
+  PUBLIC_KEY: (kid: string) => `/auth/keys/public/${kid}`,
 } as const
 
 // Audience Configuration
 export const AUDIENCE_CONFIG = {
   AUDIENCE_PREFIX: 'api',
-  AUDIENCE_SUFFIX: '.example',
+  AUDIENCE_SUFFIX: '.example.com',
 } as const

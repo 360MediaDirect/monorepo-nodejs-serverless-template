@@ -1,40 +1,24 @@
-import { NumberValue } from '@aws/dynamodb-auto-marshaller'
-import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client'
+import {
+  DynamoDBDocumentClient,
+  BatchWriteCommand,
+  ScanCommand,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb'
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function unwrapNumbers(value: any): any {
-  if (value == null || value instanceof Date) {
-    return value
-  }
-  if (NumberValue.isNumberValue(value)) {
-    return value.valueOf()
-  }
-  if (Array.isArray(value)) {
-    return value.map((i) => unwrapNumbers(i))
-  }
-  if (typeof value === 'object') {
-    for (const key in value) {
-      if (value.hasOwnProperty(key)) {
-        value[key] = unwrapNumbers(value[key])
-      }
-    }
-  }
-  return value
-}
-
 export const doBatchOp = async (
-  client: DocumentClient,
+  client: DynamoDBDocumentClient,
   operation: 'read' | 'put' | 'delete',
   items: any[],
   tableName: string,
   keyName?: string, // only for delete
 ): Promise<number> => {
   if (operation === 'put') {
-    await client
-      .batchWrite({
+    await client.send(
+      new BatchWriteCommand({
         RequestItems: {
           [tableName]: items.map((item) => {
             return {
@@ -44,11 +28,11 @@ export const doBatchOp = async (
             }
           }),
         },
-      })
-      .promise()
+      }),
+    )
   } else if (operation === 'delete') {
-    await client
-      .batchWrite({
+    await client.send(
+      new BatchWriteCommand({
         RequestItems: {
           [tableName]: items.map((item) => {
             return {
@@ -60,8 +44,8 @@ export const doBatchOp = async (
             }
           }),
         },
-      })
-      .promise()
+      }),
+    )
   }
 
   await sleep(10)
@@ -129,12 +113,21 @@ export const runOpsOnItemSet = async (
   }
 }
 
-export async function* autoPaginateScan<I extends DocumentClient.AttributeMap>(
-  docClient: DocumentClient,
-  params: DocumentClient.ScanInput,
+export async function* autoPaginateScan<I extends Record<string, any>>(
+  docClient: DynamoDBDocumentClient,
+  params: {
+    TableName: string
+    FilterExpression?: string
+    ExpressionAttributeValues?: Record<string, any>
+    ExpressionAttributeNames?: Record<string, string>
+    Limit?: number
+    ExclusiveStartKey?: Record<string, any>
+  },
 ) {
+  let currentParams = { ...params }
+
   while (true) {
-    const data = await docClient.scan(params).promise()
+    const data = await docClient.send(new ScanCommand(currentParams))
 
     if (data.Items && data.Items.length) {
       const items = data.Items as I[]
@@ -145,12 +138,15 @@ export async function* autoPaginateScan<I extends DocumentClient.AttributeMap>(
       break
     }
 
-    params = { ...params, ExclusiveStartKey: data.LastEvaluatedKey }
+    currentParams = {
+      ...currentParams,
+      ExclusiveStartKey: data.LastEvaluatedKey,
+    }
   }
 }
 
 export const runQuery = async (
-  client: any,
+  client: DynamoDBDocumentClient,
   tableName: string,
   hashField: string,
   hashValue: string,
@@ -183,6 +179,6 @@ export const runQuery = async (
   if (lastEvaluatedKey !== undefined)
     queryParams.ExclusiveStartKey = lastEvaluatedKey
 
-  const result = await client.query(queryParams).promise()
+  const result = await client.send(new QueryCommand(queryParams))
   return result
 }

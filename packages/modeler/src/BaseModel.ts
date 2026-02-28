@@ -1,6 +1,12 @@
-import { mapper } from './lib/mapper'
-import { unwrapNumbers } from './ddb'
-export { mapper }
+import { docClient } from './lib/mapper'
+import {
+  GetCommand,
+  PutCommand,
+  DeleteCommand,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb'
+import { getMetadata } from './lib/metadata'
+import { randomUUID } from 'crypto'
 import _ from 'lodash'
 
 export interface BaseModelProperties {
@@ -43,22 +49,46 @@ export class BaseModel implements BaseModelProperties {
     indexName?: string,
     strongConsistent?: boolean,
   ): Promise<T> {
+    const metadata = getMetadata(this)
     let partial: Partial<T>
+
     if (!indexName) {
-      const queryObj = new this() as T
-      Object.assign(queryObj, keyObject)
-      partial = await mapper
-        .get(queryObj, {
-          readConsistency: strongConsistent ? 'strong' : 'eventual',
-        })
-        .then(unwrapNumbers)
-    } else {
-      for await (const result of mapper.query(this, keyObject, {
-        indexName,
-        readConsistency: strongConsistent ? 'strong' : 'eventual',
-      })) {
-        partial = unwrapNumbers(result as T)
+      // Direct get by primary key
+      const response = await docClient.send(
+        new GetCommand({
+          TableName: metadata.tableName,
+          Key: keyObject,
+          ConsistentRead: strongConsistent,
+        }),
+      )
+      partial = response.Item as Partial<T>
+      if (!partial) {
+        const error = new Error('Item not found') as any
+        error.name = 'ItemNotFoundException'
+        throw error
       }
+    } else {
+      // Query by index
+      const keyConditions = Object.entries(keyObject).map(
+        ([key], index) => `${key} = :val${index}`,
+      )
+      const expressionAttributeValues = Object.entries(keyObject).reduce(
+        (acc, [, value], index) => ({ ...acc, [`:val${index}`]: value }),
+        {},
+      )
+
+      const response = await docClient.send(
+        new QueryCommand({
+          TableName: metadata.tableName,
+          IndexName: indexName,
+          KeyConditionExpression: keyConditions.join(' AND '),
+          ExpressionAttributeValues: expressionAttributeValues,
+          ConsistentRead: strongConsistent,
+          Limit: 1,
+        }),
+      )
+
+      partial = response.Items?.[0] as Partial<T> | undefined
     }
     const Constructor = this as any
     return Constructor.from(partial || {})
@@ -79,8 +109,21 @@ export class BaseModel implements BaseModelProperties {
    * Permanently deletes this model from the database.
    * @returns A promise that resolves when deletion is complete
    */
-  public async hardDelete<T extends BaseModel>(): Promise<void> {
-    await mapper.delete(this as unknown as T)
+  public async hardDelete(): Promise<void> {
+    const metadata = getMetadata(this.constructor)
+    const key: Record<string, any> = {
+      [metadata.hashKey]: this[metadata.hashKey],
+    }
+    if (metadata.rangeKey) {
+      key[metadata.rangeKey] = this[metadata.rangeKey]
+    }
+
+    await docClient.send(
+      new DeleteCommand({
+        TableName: metadata.tableName,
+        Key: key,
+      }),
+    )
   }
 
   /**
@@ -89,10 +132,22 @@ export class BaseModel implements BaseModelProperties {
    * @returns A promise that resolves to the saved model instance
    */
   public async save<T extends BaseModel>(): Promise<T> {
+    const metadata = getMetadata(this.constructor)
+
+    // Generate ID if needed
+    if (metadata.autoGenerateHashKey && !this[metadata.hashKey]) {
+      this[metadata.hashKey] = randomUUID()
+    }
+
     this.updatedAt = Date.now()
-    const saved = await mapper.put(this)
-    const savedCopy = _.cloneDeep(saved)
-    Object.assign(this, savedCopy)
+
+    await docClient.send(
+      new PutCommand({
+        TableName: metadata.tableName,
+        Item: this,
+      }),
+    )
+
     return this as unknown as T
   }
 }

@@ -1,0 +1,149 @@
+service: ${self:custom.projectName.lower, "example"}-api
+frameworkVersion: '4'
+projectDir: ../..
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  projectName: ${file(../../common/serverless/serverless.custom.yml):custom.projectName}
+  stage: ${file(../../common/serverless/serverless.custom.yml):custom.stage}
+  resourcesStages: ${file(../../common/serverless/serverless.custom.yml):custom.resourcesStages}
+  resourcesStage: ${file(../../common/serverless/serverless.custom.yml):custom.resourcesStage}
+  clientBaseURLs: ${file(../../common/serverless/serverless.custom.yml):custom.clientBaseURLs}
+  clientBaseURL: ${file(../../common/serverless/serverless.custom.yml):custom.clientBaseURL}
+  scriptHooks:
+    before:package:createDeploymentArtifacts: npm run build
+
+plugins:
+  - serverless-deployment-bucket
+  - serverless-scriptable-plugin
+  - serverless-prune-plugin
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  stage: ${self:custom.stage}
+  deploymentBucket:
+    name: ${self:custom.projectName.lower, "example"}-deploy-${self:custom.stage}
+    serverSideEncryption: AES256
+
+package:
+  patterns:
+    - '!**/*'
+    - package.json
+    - openapi.json
+    - dist/**/*
+
+functions:
+  getVersion:
+    handler: dist/index.versionHandler
+    events:
+      - http:
+          method: get
+          path: /version
+          cors: true
+
+resources:
+  # API Gateway Errors
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    GatewayResponseDefault5XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    # Handle CORS preflight for routes where OPTIONS mock integration is missing
+    # API Gateway returns MISSING_AUTHENTICATION_TOKEN (403) when no OPTIONS method exists
+    # This converts that 403 to a 200 with CORS headers so browsers accept the preflight
+    GatewayResponseMissingAuthToken:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        StatusCode: '200'
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: MISSING_AUTHENTICATION_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    # DynamoDB table for Locks package
+    MutexLocksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: group
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: group
+            KeyType: RANGE
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        TableName: ${self:custom.projectName.lower, "example"}-mutex-locks-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+    # IAM role to grant access to the locks table
+    LocksRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.projectName.cap, "Example"}LocksRole-${self:provider.stage}
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: ${self:custom.projectName.cap, "Example"}LocksPolicy-${self:provider.stage}
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: 'Allow'
+                  Action:
+                    - 'dynamodb:*'
+                  Resource:
+                    - Fn::GetAtt:
+                        - MutexLocksTable
+                        - Arn
+
+  Outputs:
+    ApiGatewayRestApiId:
+      Value:
+        Ref: ApiGatewayRestApi
+      Export:
+        Name: ${self:custom.projectName.lower, "example"}-${self:custom.stage}-ExtApiGatewayRestApiId
+    ApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      Export:
+        Name: ${self:custom.projectName.lower, "example"}-${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+    LocksRoleArn:
+      Value:
+        Fn::GetAtt:
+          - LocksRole
+          - Arn
+      Export:
+        Name: ${self:custom.projectName.lower, "example"}-${self:custom.stage}-LocksRoleArn

@@ -1,15 +1,18 @@
-import { DataMapper } from '@aws/dynamodb-data-mapper'
-import DynamoDB from 'aws-sdk/clients/dynamodb'
-
-export { ItemNotFoundException, QueryIterator } from '@aws/dynamodb-data-mapper'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const { DYNAMODB_REGION, DYNAMODB_ENDPOINT } = process.env
 
-const mapper = new DataMapper({
-  client: new DynamoDB({
-    region: DYNAMODB_REGION || process.env.AWS_REGION || 'us-east-1',
-    ...(DYNAMODB_ENDPOINT && { endpoint: DYNAMODB_ENDPOINT }),
-  }),
+const client = new DynamoDBClient({
+  region: DYNAMODB_REGION || process.env.AWS_REGION || 'us-east-1',
+  ...(DYNAMODB_ENDPOINT && { endpoint: DYNAMODB_ENDPOINT }),
 })
 
-export { mapper }
+export const docClient = DynamoDBDocumentClient.from(client, {
+  marshallOptions: {
+    removeUndefinedValues: true,
+  },
+})
+
+// Legacy export for backward compatibility during migration
+export const mapper = docClient

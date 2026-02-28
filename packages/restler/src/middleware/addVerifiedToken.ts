@@ -1,9 +1,16 @@
 import { Middleware } from '../types'
-import { Embassy } from 'embassy'
+import { Embassy } from '@360mediadirect/embassy'
 import log from '@360mediadirect/log'
 
-const addVerifiedToken = (embassy: Embassy): Middleware => {
+/**
+ * Middleware to verify JWT tokens from Authorization header.
+ * If embassy is not provided (public API), skips token verification.
+ */
+const addVerifiedToken = (embassy?: Embassy): Middleware => {
   return async (req, _res, next) => {
+    // Skip token verification for public APIs (no embassy configured)
+    if (!embassy) return next()
+
     const auth = req.get('Authorization')
     if (!auth) return next()
     const match = auth.match(/^\s*Bearer (\S+)\s*$/)

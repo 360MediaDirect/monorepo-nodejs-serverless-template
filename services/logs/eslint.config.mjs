@@ -15,6 +15,9 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   {
+    ignores: ['src/common/**'],
+  },
+  {
     extends: compat.extends(
       'plugin:@typescript-eslint/recommended',
       'plugin:prettier/recommended',

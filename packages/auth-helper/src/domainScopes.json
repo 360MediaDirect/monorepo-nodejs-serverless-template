@@ -1,4 +1,7 @@
 {
+  "admin": {
+    "dashboard": 0
+  },
   "auth": {
     "getUsers": 0,
     "createUser": 1,

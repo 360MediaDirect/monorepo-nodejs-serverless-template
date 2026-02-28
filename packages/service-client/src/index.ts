@@ -1,4 +1,4 @@
-import { Lambda } from 'aws-sdk'
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda'
 
 export interface ServiceClientOptions {
   region?: string
@@ -23,12 +23,12 @@ export interface ServiceResponse<T = any> {
 }
 
 export class ServiceClient {
-  private lambda: Lambda
+  private lambda: LambdaClient
 
   constructor(options: ServiceClientOptions = {}) {
     const { region, endpoint, ...credentials } = options
 
-    this.lambda = new Lambda({
+    this.lambda = new LambdaClient({
       region: region || process.env.AWS_REGION || 'us-east-1',
       ...(endpoint && { endpoint }),
       ...(credentials.accessKeyId &&
@@ -56,21 +56,21 @@ export class ServiceClient {
       qualifier,
     } = options
 
-    const response = await this.lambda
-      .invoke({
+    const response = await this.lambda.send(
+      new InvokeCommand({
         FunctionName: serviceHandler,
         InvocationType: invocationType,
         Payload: JSON.stringify(payload),
         ...(logType && { LogType: logType }),
         ...(clientContext && { ClientContext: clientContext }),
         ...(qualifier && { Qualifier: qualifier }),
-      })
-      .promise()
+      }),
+    )
 
     return {
       ...response,
       Payload: response.Payload
-        ? JSON.parse(response.Payload.toString())
+        ? JSON.parse(Buffer.from(response.Payload).toString())
         : undefined,
     }
   }

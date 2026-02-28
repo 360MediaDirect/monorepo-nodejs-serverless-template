@@ -4,7 +4,7 @@
   "description": "Auth helper",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Tom Shawver <tom@360mediadirect.com>",
+  "author": "Steve Yardumian <steve@360mediadirect.com>",
   "license": "ISC",
   "engines": {
     "node": ">=22.x"
@@ -26,8 +26,8 @@
     ]
   },
   "dependencies": {
-    "aws-sdk": "^2.1692.0",
-    "embassy": "^2.0.4"
+    "@360mediadirect/embassy": "^2.0.5",
+    "@aws-sdk/client-ssm": "^3.699.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

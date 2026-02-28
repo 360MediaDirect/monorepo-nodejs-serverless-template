@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { HttpError } from 'http-errors'
-import { Token } from 'embassy'
+import { Token } from '@360mediadirect/embassy'
 import { OpenApiRequestMetadata } from 'express-openapi-validator/dist/framework/types'
-import { Embassy } from 'embassy'
+import { Embassy } from '@360mediadirect/embassy'
 
 export type ControllerMethod = 'get' | 'post' | 'put' | 'delete' | 'patch'
 
@@ -62,11 +62,64 @@ export type ErrorHandlerMiddleware = (
   next: NextFunction,
 ) => any
 
+export interface RateLimitOptions {
+  /**
+   * DynamoDB table name for rate limiting
+   * Defaults to RATE_LIMIT_TABLE_NAME env var
+   */
+  tableName?: string
+
+  /**
+   * Maximum number of requests allowed in the window
+   */
+  maxRequests: number
+
+  /**
+   * Time window in seconds
+   */
+  windowSeconds: number
+
+  /**
+   * Key extractor function or preset name
+   * - function: Custom extractor
+   * - "ip": Use IP address (default)
+   * - "email": Use req.body.email
+   * - "userId": Use req.token?.sub
+   */
+  keyExtractor?: ((req: RestRequest) => string) | 'ip' | 'email' | 'userId'
+
+  /**
+   * Custom error message
+   */
+  message?: string
+
+  /**
+   * Skip function to bypass rate limiting for certain requests
+   */
+  skip?: (req: RestRequest) => boolean | Promise<boolean>
+
+  /**
+   * Whether rate limiting is enabled
+   * Defaults to true
+   */
+  enabled?: boolean
+}
+
 export type AppOptions = {
   controllers: ControllerMap
-  embassy: Embassy
+  /**
+   * Embassy instance for JWT token verification.
+   * Optional - if not provided, no token verification is performed.
+   * Use this for public APIs that don't require authentication.
+   */
+  embassy?: Embassy
   basicAuth?: string
   log?: Logger
+  /**
+   * Service-level rate limiting configuration
+   * Applied to all endpoints unless overridden
+   */
+  rateLimit?: RateLimitOptions | RateLimitOptions[]
 } & ({ specPath: string } | { apiSpec: any })
 
 export const SilentSymbol = Symbol.for('silent')

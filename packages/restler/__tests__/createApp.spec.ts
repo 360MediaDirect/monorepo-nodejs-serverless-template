@@ -29,9 +29,9 @@ let log = getLogSpy()
 describe('createApp', () => {
   beforeAll(async () => {
     process.env.PUBKEY_TEST =
-      '-----BEGIN PUBLIC KEY-----|MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEL8h4gT11geJS9H23KQAiWc0FRccEJJ8l|t0oJ2e30A7FA5IV6508SnxBC27L9JV5mSe84aLnY6lVUZsSNyDtnWg==|-----END PUBLIC KEY-----'
+      '-----BEGIN PUBLIC KEY-----|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6IB5P0j6OyaBXVQsqmFtlyhaND7D|TWs6mpC1DuJlH7CUCyUkgmORbA2DGqEIFiFBGYb2Kcq7KMnmLsSt02uhSQ==|-----END PUBLIC KEY-----'
     process.env.PRIVKEY_TEST =
-      '-----BEGIN EC PRIVATE KEY-----|MHQCAQEEIOlhAv8I1Z5luoMbI6nhsyfBRA/i5YWtE0WrrXUYuab9oAcGBSuBBAAK|oUQDQgAEL8h4gT11geJS9H23KQAiWc0FRccEJJ8lt0oJ2e30A7FA5IV6508SnxBC|27L9JV5mSe84aLnY6lVUZsSNyDtnWg==|-----END EC PRIVATE KEY-----'
+      '-----BEGIN EC PRIVATE KEY-----|MHcCAQEEIPzNokwLewN7vp3bYqu895Tu2GXSO549cfbh0rUW7beHoAoGCCqGSM49|AwEHoUQDQgAE6IB5P0j6OyaBXVQsqmFtlyhaND7DTWs6mpC1DuJlH7CUCyUkgmOR|bA2DGqEIFiFBGYb2Kcq7KMnmLsSt02uhSQ==|-----END EC PRIVATE KEY-----'
     process.env.PRIVKEY_HMAC = 'abc123'
     noScopeToken = await token.sign('test')
     await token.grantScope('auth', 'createUser')

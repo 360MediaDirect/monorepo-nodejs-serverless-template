@@ -4,13 +4,13 @@
   "main": "handler.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && cp -r src/!(*.ts) dist/ 2>/dev/null || true",
-    "build:watch": "tsc -w -p tsconfig.build.json",
+    "build": "./scripts/build.sh",
+    "build:watch": "rm -rf src/common && cp -r ../../common src/ && tsc -w -p tsconfig.build.json",
     "lint": "eslint './src/**/*.{js,ts}'",
     "lint:fix": "eslint './src/**/*.{js,ts}' --fix",
     "lint-staged": "lint-staged",
-    "test": "yarn lint && jest --coverage",
-    "test:watch": "yarn lint && jest --watchAll",
+    "test": "rm -rf src/common && cp -r ../../common src/ && yarn lint && jest --coverage --passWithNoTests",
+    "test:watch": "rm -rf src/common && cp -r ../../common src/ && yarn lint && jest --watchAll --passWithNoTests",
     "clean": "rm -rf coverage"
   },
   "lint-staged": {
@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@360mediadirect/auth-helper": "^1.0.0",
-    "@360mediadirect/log": "^1.1.1",
+    "@360mediadirect/log": "^1.1.2",
     "@360mediadirect/restler": "^1.0.0",
-    "aws-sdk": "^2.1692.0",
+    "@aws-sdk/client-sns": "^3.699.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -40,6 +40,9 @@
     "jest-util": "^30.2.0",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
+    "serverless": "^4.28.0",
+    "serverless-prune-plugin": "^2.1.0",
+    "serverless-scriptable-plugin": "^1.3.1",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
@@ -51,7 +54,10 @@
     ],
     "testEnvironment": "node",
     "verbose": true,
-    "testPathIgnorePatterns": [],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
     "collectCoverageFrom": [
       "src/**/*.ts"
     ],
@@ -59,7 +65,7 @@
       "^@360mediadirect/restler$": "<rootDir>/../../packages/restler/src/index.ts",
       "^@360mediadirect/auth-helper$": "<rootDir>/../../packages/auth-helper/src/index.ts",
       "^uuid$": "<rootDir>/src/__mocks__/uuid.ts",
-      "^aws-sdk$": "<rootDir>/src/__mocks__/aws-sdk.ts"
+      "^@aws-sdk/client-sns$": "<rootDir>/src/__mocks__/@aws-sdk/client-sns.ts"
     }
   }
 }

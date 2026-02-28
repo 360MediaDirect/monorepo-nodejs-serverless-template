@@ -1,8 +1,8 @@
 import { createController } from '@360mediadirect/restler'
-import AWS from 'aws-sdk'
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns'
 import { v4 as uuidv4 } from 'uuid'
 
-const sns = new AWS.SNS()
+const sns = new SNSClient({})
 
 export const clientLog = createController(async (req, res) => {
   const { level, message, data } = req.body || {}
@@ -29,7 +29,7 @@ export const clientLog = createController(async (req, res) => {
       MessageDeduplicationId: `${id}_${now}`,
       MessageGroupId: `${process.env.LOG_WAREHOUSE_TABLE_NAME}_${id}`,
     }
-    await sns.publish(msg).promise()
+    await sns.send(new PublishCommand(msg))
   }
 
   res.status(204)

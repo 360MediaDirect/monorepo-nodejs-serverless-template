@@ -1,8 +1,8 @@
 import * as controllers from '../index'
 import supertest from 'supertest'
 import { createApp } from '@360mediadirect/restler'
-import apiSpec from '../../../openapi.json'
-import { mockPublish } from '../../__mocks__/aws-sdk'
+import apiSpec from '../../openapi.json'
+import { mockSend } from '../../__mocks__/@aws-sdk/client-sns'
 
 import { embassy } from '../../lib/authorizer'
 
@@ -15,7 +15,7 @@ describe('/logs', () => {
   })
 
   beforeEach(() => {
-    mockPublish.mockClear()
+    mockSend.mockClear()
   })
 
   describe('/client', () => {
@@ -29,7 +29,7 @@ describe('/logs', () => {
         })
       expect(res.status).toBe(204)
       expect(res.body).toEqual({})
-      expect(mockPublish).not.toHaveBeenCalled()
+      expect(mockSend).not.toHaveBeenCalled()
     })
 
     it('successfully logs a message and publishes to warehouse', async () => {
@@ -42,14 +42,18 @@ describe('/logs', () => {
         })
       expect(res.status).toBe(204)
       expect(res.body).toEqual({})
-      expect(mockPublish).toHaveBeenCalledTimes(1)
+      expect(mockSend).toHaveBeenCalledTimes(1)
 
-      const publishCall = mockPublish.mock.calls[0][0]
-      expect(publishCall.TopicArn).toBe('arn:aws:sns:us-east-1:123456789:test')
-      expect(publishCall.MessageGroupId).toContain('test-log-warehouse')
-      expect(publishCall.MessageDeduplicationId).toBeTruthy()
+      const publishCommand = mockSend.mock.calls[0][0]
+      expect(publishCommand.input.TopicArn).toBe(
+        'arn:aws:sns:us-east-1:123456789:test',
+      )
+      expect(publishCommand.input.MessageGroupId).toContain(
+        'test-log-warehouse',
+      )
+      expect(publishCommand.input.MessageDeduplicationId).toBeTruthy()
 
-      const message = JSON.parse(publishCall.Message)
+      const message = JSON.parse(publishCommand.input.Message)
       expect(message.tableName).toBe('test-log-warehouse')
       expect(message.entityRecord).toMatchObject({
         level: 'warn',
