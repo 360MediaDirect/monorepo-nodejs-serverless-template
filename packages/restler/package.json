@@ -1,10 +1,10 @@
 {
   "name": "@360mediadirect/restler",
   "version": "1.0.0",
-  "description": "RESTify controllers in services",
+  "description": "Express-based REST framework with OpenAPI validation, JWT auth middleware, rate limiting, CORS, and structured request/response logging for Lambda services.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "author": "Steve Yardumian <steve@360mediadirect.com>",
+  "author": "",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=22.x"

@@ -29,7 +29,7 @@ export const DEFAULTS = {
   REFRESH_DURATION: 3600000, // 1 hour (in milliseconds)
   MAX_ENABLED_CLIENTS: 8,
   MIN_CLIENT_TURNOVER_SECS: 3600, // 1 hour
-  IGNORE_MAX_CLIENTS_DOMAIN: '@360mediadirect.com',
+  IGNORE_MAX_CLIENTS_DOMAIN: '@example.com',
   STAGE: 'dev',
 } as const
 
@@ -40,14 +40,7 @@ export const MAGIC_LINK_TEMPLATES = {
 } as const
 
 // Allowed URL Domains
-export const ALLOWED_URL_DOMAINS = ['localhost', '360mediadirect.net'] as const
-
-// Warehouse Status Types
-export const WAREHOUSE_STATUS = {
-  OK: 'OK',
-  DISCREPANCY: 'DISCREPANCY',
-  ERROR: 'ERROR',
-} as const
+export const ALLOWED_URL_DOMAINS = ['localhost', 'example.com'] as const
 
 // Test Constants
 export const TEST_CONSTANTS = {

@@ -1,10 +1,10 @@
 {
   "name": "@360mediadirect/auth-helper",
   "version": "1.0.0",
-  "description": "Auth helper",
+  "description": "JWT authentication utilities for creating and verifying tokens using EC256 keys stored in AWS SSM Parameter Store.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Steve Yardumian <steve@360mediadirect.com>",
+  "author": "",
   "license": "ISC",
   "engines": {
     "node": ">=22.x"

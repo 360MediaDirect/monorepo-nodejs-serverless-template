@@ -1,9 +1,9 @@
 {
   "name": "api-docs",
   "version": "1.0.0",
-  "description": "Hosted API docs",
+  "description": "Auto-generated Swagger UI documentation site built from merged OpenAPI specs across all services.",
   "main": "src/index.html",
-  "author": "Tom Shawver <tom@360mediadirect.com>",
+  "author": "",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {

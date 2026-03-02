@@ -1,6 +1,7 @@
 {
   "name": "monorepo-nodejs-serverless-template",
   "version": "0.0.1",
+  "description": "A monorepo template for building Node.js serverless applications on AWS Lambda with shared packages, structured logging, JWT authentication, and OpenAPI validation.",
   "main": "index.js",
   "license": "UNLICENSED",
   "private": true,

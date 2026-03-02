@@ -19,10 +19,10 @@ export const DEFAULTS = {
   TOKEN_EXPIRATION_SECS: 86400, // 24 hours
   MAGIC_EXPIRATION_SECS: 3600 * 24, // 1 day
   REFRESH_DURATION: 365 * 24 * 60 * 60, // 1 year in seconds
-  MAX_ENABLED_CLIENTS: 8,
+  MAX_ENABLED_CLIENTS: 5,
   MIN_CLIENT_TURNOVER_SECS: 3600,
   STAGE: 'dev',
-  IGNORE_MAX_CLIENTS_DOMAIN: '@360mediadirect.com',
+  IGNORE_MAX_CLIENTS_DOMAIN: '@example.com',
 } as const
 
 // AWS Regions

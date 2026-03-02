@@ -2,9 +2,9 @@
   "name": "api",
   "version": "1.0.0",
   "major": 1,
-  "description": "Root API service",
+  "description": "API Gateway and shared infrastructure service that provisions the REST API, deployment bucket, and exports used by other services.",
   "main": "dist/index.js",
-  "author": "Steve Yardumian <steve@360mediadirect.com>",
+  "author": "",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {

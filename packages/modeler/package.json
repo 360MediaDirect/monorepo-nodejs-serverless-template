@@ -1,10 +1,10 @@
 {
   "name": "@360mediadirect/modeler",
   "version": "1.0.0",
-  "description": "DynamoDB model access library",
+  "description": "Lightweight DynamoDB ORM with a BaseModel class providing CRUD operations, auto-generated IDs, soft deletes, and model metadata registration.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Steve Yardumian <steve@360mediadirect.com>",
+  "author": "",
   "license": "ISC",
   "engines": {
     "node": ">=22.x"
