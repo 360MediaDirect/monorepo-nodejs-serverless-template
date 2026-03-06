@@ -13,7 +13,7 @@
     "clean": "rm -rf node_modules dist"
   },
   "dependencies": {
-    "swagger-ui": "^5.28.0"
+    "swagger-ui": "^5.32.0"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
